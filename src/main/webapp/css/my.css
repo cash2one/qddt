@@ -1,0 +1,12 @@
+.panel-heading {
+    border-color: #e7e7e7;
+    background-color: #fff;
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    padding: 20px;
+}
+
+.panel-body {
+    padding: 20px;
+}
