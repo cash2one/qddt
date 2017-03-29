@@ -36,7 +36,7 @@
                         <td>${assessment.id}</td>
                         <td>${assessment.assessmentId}</td>
                         <td >${assessment.billingCycle}</td>
-                        <td  >${zoneName}</td>
+                        <td  >${zoneNames[assessment.assessmentId]}</td>
                         <td  >${assessment.staffName}</td>
                         <td  >${assessment.cssStaffId}</td>
                         <td  >${assessment.roleName}</td>

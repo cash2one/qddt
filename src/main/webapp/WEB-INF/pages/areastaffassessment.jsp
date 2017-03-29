@@ -38,22 +38,22 @@
                     <th data-options="field:'assessmentId',width:100">考核编号</th>
                     <th data-options="field:'billingCycle',width:100">考核年月</th>
                     <th data-options="field:'areaname',width:100">区域</th>
-                    <th data-options="field:'districtName',width:100">分局</th>
-                    <th data-options="field:'zoneName',width:100">片区</th>
-                    <th data-options="field:'criterion',width:100">考核标准</th>
-                    <th data-options="field:'score',width:100">考核得分</th>
-                    <th data-options="field:'lastReward',width:100">上期预发</th>
-                    <th data-options="field:'lastForwardReward',width:140">上期实际应发奖励</th>
-                    <th data-options="field:'lastSettlement',width:100">上期结算</th>
-                    <th data-options="field:'forwardReward',width:100">本期预发</th>
-                    <th data-options="field:'reward',width:100">本期应发</th>
-                    <th data-options="field:'doubleReward',width:100">双倍激励金额</th>
-                    <th data-options="field:'state',width:100">状态</th>
+                    <th data-options="field:'districtName',width:100,sortable:true">分局</th>
+                    <th data-options="field:'zoneName',width:100,sortable:true">片区</th>
+                    <th data-options="field:'criterion',width:100,sortable:true">考核标准</th>
+                    <th data-options="field:'score',width:100,sortable:true">考核得分</th>
+                    <th data-options="field:'lastReward',width:100,sortable:true">上期预发</th>
+                    <th data-options="field:'lastForwardReward',width:140,sortable:true">上期实际应发奖励</th>
+                    <th data-options="field:'lastSettlement',width:100,sortable:true">上期结算</th>
+                    <th data-options="field:'forwardReward',width:100,sortable:true">本期预发</th>
+                    <th data-options="field:'reward',width:100,sortable:true">本期应发</th>
+                    <th data-options="field:'doubleReward',width:100,sortable:true">双倍激励金额</th>
+                    <th data-options="field:'state',width:100,sortable:true">状态</th>
                     <th data-options="field:'stateDate',width:150">时间</th>
                     <th data-options="field:'cssStaffId',width:150">CSS工号</th>
-                    <th data-options="field:'roleName',width:150">岗位类别</th>
+                    <th data-options="field:'roleName',width:150,sortable:true">岗位类别</th>
                     <th data-options="field:'staffName',width:150">姓名</th>
-                    <th data-options="field:'personalReward',width:150">个人绩效</th>
+                    <th data-options="field:'personalReward',width:150,sortable:true">个人绩效</th>
 
                     <!-- 分配详情 -->
                     <th data-options="field:'operation',width:150">操作</th>
@@ -84,7 +84,7 @@
                                 <c:if test="${assessment.state=='AUD'}">已审核</c:if>
                                 <c:if test="${assessment.state=='CLS'}">已关闭(人工)</c:if>
                                 <c:if test="${assessment.state=='END'}">已结束</c:if></td>
-                            <td>${assessment.createDate}</td>
+                            <td><fmt:formatDate value="${assessment.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                             <!-- 分配详情 -->
                             <td>${staffs.cssStaffId}</td>
                             <td>${staffs.roleName}</td>
@@ -122,7 +122,7 @@
                                 <c:if test="${assessment.state=='AUD'}">已审核</c:if>
                                 <c:if test="${assessment.state=='CLS'}">已关闭(人工)</c:if>
                                 <c:if test="${assessment.state=='END'}">已结束</c:if></td>
-                            <td>${assessment.createDate}</td>
+                            <td><fmt:formatDate value="${assessment.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                             <!-- 分配详情 -->
                             <td></td>
                             <td></td>
@@ -152,14 +152,18 @@
     $(function () {
         var dg=$('#dg').datagrid({
             fit: false, //datagrid自适应宽度
-            fitColumn: true, //列自适应宽度
+            fitColumn: false, //列自适应宽度
             striped: true, //行背景交换
-            nowap: false //列内容多时自动折至第二行
+            nowrap: false //列内容多时自动折至第二行
             , rownumbers: true
             , filterBtnIconCls: 'icon-filter'
                     ,remoteSort:false
                     ,multiSort:true
-            , onLoadSuccess: function(){$.resizeGrid();}
+            ,showFooter:true
+            , onLoadSuccess: function(){
+                $.resizeGrid();
+                //$.resizeFooterGrid();
+            }
             ,toolbar:[
                 { text: '保存', iconCls: 'icon-save'
                     ,handler: function() {
@@ -175,11 +179,19 @@
                 }
             ]
         });
+        dg.datagrid('enableFilter');
+        dg.datagrid('reloadFooter',
+                [{"doubleReward":"${totalReward}","score":<fmt:formatNumber value="${averageScore}" pattern="0.00"/> ,"personalReward":"${personalReward}","assessmentId":"合计:"}]);
+        dg.datagrid('resize');
         /*dg.datagrid().datagrid('enableFilter'
                 , [$.makeNumberFilter('reward',2)
                     ,$.makeSelectFilter(dg,'billingCycle',[{text:"201703",value:'201703'},{text:"201704",value:'201704'}])
                 ]
         ).datagrid('resize');*/
+        //$.resizeFooterGrid();
+        //$.resizeGrid();
+        $.resizeFooterGrid();
+        $.resizeGrid();
     });
 
     function doViewAudit(assessmentId) {

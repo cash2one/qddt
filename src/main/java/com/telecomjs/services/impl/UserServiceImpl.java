@@ -88,8 +88,17 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+
+    /**
+     * 根据css工号返回所挂载的片区ID列表
+     *
+     *  * 从返回单个zone改为一个String List
+     *  * modified by zark on 2017/3/27
+     * @param cssNumber
+     * @return
+     */
     @Override
-    public String findZoneByStaff(String cssNumber) {
+    public List<String> findZoneByStaff(String cssNumber) {
         return staffMapper.findZoneByStaff(cssNumber);
     }
 
@@ -135,7 +144,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AppYdbpAreaZwstaff findStaffByCssNumber(String cssNumber) {
+    public List<AppYdbpAreaZwstaff> findStaffByCssNumber(String cssNumber) {
         return ydbpAreaZwstaffMapper.findStaffByCssNumber(cssNumber);
     }
 

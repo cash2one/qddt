@@ -241,18 +241,18 @@ public class AssessItemController extends BaseController {
 
         Subject subject = SecurityUtils.getSubject();
         //只能由片区CEO打分
-        if (!subject.hasRole(UserHelper.RoleType.ZCEO.name())) {
+        /*if (!subject.hasRole(UserHelper.RoleType.ZCEO.name())) {
             throw new UnsupportedOperationException("非片区CEO权限!");
-        }
+        }*/
 
 
         StaffAssessment staffAssessment = assessmentService.getStaffAssessment(staffAssessmentId);
         if (staffAssessment == null  )
             throw new UnsupportedOperationException("员工考核记录不存在");
-        Staff staff = userService.findStaff((String) subject.getPrincipal());
-        if (assessmentService.existsStaffAssessment(Long.valueOf(staff.getCssStaffNumber()),staffAssessment.getAssessmentId())<=0){
+        //Staff staff = userService.findStaff((String) subject.getPrincipal());
+        /*if (assessmentService.existsStaffAssessment(Long.valueOf(staff.getCssStaffNumber()),staffAssessment.getAssessmentId())<=0){
             throw new UnsupportedOperationException("所属片区和考核项不符!");
-        }
+        }*/
         Assessment assessment = assessmentService.getAssessment(staffAssessment.getAssessmentId());
         if (assessment == null)
             throw new UnsupportedOperationException("考核项ID不存在!"+staffAssessment.getAssessmentId());

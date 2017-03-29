@@ -71,7 +71,7 @@
                      <li><a href="#" class="dropdown-toggle"><i class="icon-desktop"></i><span class="menu-text"> 考核管理 </span><b class="arrow icon-angle-down"></b></a>
 					   <ul class="submenu">
                          <li class="home"><a  href="javascript:void(0)" name="assessment/upload.html"  title="考核上报" class="iframeurl"><i class="icon-double-angle-right"></i>考核上报</a></li>
-						 <li class="home"><a  href="javascript:void(0)" name="assessment/eventlist.html"  title="查看考核上报清单" class="iframeurl"><i class="icon-double-angle-right"></i>上报列表</a></li>
+						 <li class="home"><a  href="javascript:void(0)" name="assessment/eventlist.html"  title="上报列表" class="iframeurl"><i class="icon-double-angle-right"></i>上报列表</a></li>
 						 <li class="home"><a  href="javascript:void(0)" name="/assessment/adminassessmentlist.html" title="查看考核清单"  class="iframeurl"><i class="icon-double-angle-right"></i>查看考核清单</a></li>
 						 <%--<li class="home"><a href="javascript:void(0)" name="已到期询价项目.html" title="已到期询价项目"  class="iframeurl"><i class="icon-double-angle-right"></i>分发考核表</a></li>--%>
 						 <%--<li class="home"><a href="javascript:void(0)" name="暂存项目.html" title="暂存项目"  class="iframeurl"><i class="icon-double-angle-right"></i>查看分发记录</a></li>--%>
@@ -85,21 +85,21 @@
                     <li class="home"><a href="javascript:void(0)" name="/assessment/adminareaassessments.html" title="区域视图"  class="iframeurl"><i class="icon-double-angle-right"></i>面向渠道视图</a></li>
                     <li class="home"><a href="javascript:void(0)" name="/assessment/admindistrictassessments.html" title="分局视图"  class="iframeurl"><i class="icon-double-angle-right"></i>面向分局视图</a></li>
                     <li class="home"><a href="javascript:void(0)" name="/assessment/adminassessmentlist.html" title="片区视图"  class="iframeurl"><i class="icon-double-angle-right"></i>片区化视图</a></li>
-                    <li class="home"><a href="javascript:void(0)" name="/assessment/adminstaffassessment.html" title="绩效视图"  class="iframeurl"><i class="icon-double-angle-right"></i>绩效视图</a></li>
+                    <li class="home"><a href="javascript:void(0)" name="/assessment/adminstaffassessment.html?cycle=0" title="绩效视图"  class="iframeurl"><i class="icon-double-angle-right"></i>绩效视图</a></li>
                    </ul>
 				  </li>
 
 
-						<li>
+						<%--<li>
 							<a href="#" class="dropdown-toggle"><i class="icon-share"></i><span class="menu-text"> 查询管理 </span><b class="arrow icon-angle-down"></b></a>
 							<ul class="submenu">
 								<li class="home"><a href="javascript:void(0)" name="/assessment/adminqueryform.html" title="定制化查询"  class="iframeurl"><i class="icon-double-angle-right"></i>定制化查询</a></li>
-								<li class="home"><a href="javascript:void(0)" name="/assessment/adminassessmentlist.html" title="待确认订单"  class="iframeurl"><i class="icon-double-angle-right"></i>奖励分配记录</a></li>
-								<li class="home"><a href="javascript:void(0)" name="待确认订单.html" title="待确认订单"  class="iframeurl"><i class="icon-double-angle-right"></i>查询打分表</a></li>
-								<li class="home"><a href="javascript:void(0)" name="在执行订单.html" title="在执行订单"  class="iframeurl"><i class="icon-double-angle-right"></i>查询奖励签收表</a></li>
+								<li class="home"><a href="javascript:void(0)" name="/assessment/adminassessmentlist.html" title="奖励分配记录"  class="iframeurl"><i class="icon-double-angle-right"></i>奖励分配记录</a></li>
+								<li class="home"><a href="javascript:void(0)" name="待确认订单.html" title="查询打分表"  class="iframeurl"><i class="icon-double-angle-right"></i>查询打分表</a></li>
+								<li class="home"><a href="javascript:void(0)" name="在执行订单.html" title="查询奖励签收表"  class="iframeurl"><i class="icon-double-angle-right"></i>查询奖励签收表</a></li>
 
 							</ul>
-						</li>
+						</li>--%>
 						<li><a href="#" class="dropdown-toggle"><i class="icon-edit"></i><span class="menu-text"> 系统管理 </span><b class="arrow icon-angle-down"></b></a>
 							<ul class="submenu">
 								<li class="home"><a href="javascript:void(0)" name="菜单管理.html" title="菜单管理" class="iframeurl"><i class="icon-double-angle-right"></i>菜单管理</a></li>

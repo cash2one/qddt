@@ -109,7 +109,7 @@
 						</ul>
 					</div>
                     
-                 <iframe  id="iframe" style="border:0; width:100%; background-color:#FFF;"  frameborder="0" src="/assessment/dceoassessmenttodo.html" >  </iframe>
+                 <iframe  id="iframe" style="border:0; width:100%; background-color:#FFF;"  frameborder="0" src="/assessment/areaassessmentlist.html?billingcycle=0" >  </iframe>
 				 
 
 <!-- /.page-content -->

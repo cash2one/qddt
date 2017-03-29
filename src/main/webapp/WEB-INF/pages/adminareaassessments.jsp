@@ -55,7 +55,8 @@
                             <c:if test="${assessment.state=='AUD'}">已审核</c:if>
                             <c:if test="${assessment.state=='CLS'}">已关闭(人工)</c:if>
                             <c:if test="${assessment.state=='END'}">已结束</c:if></td>
-                        <td>${assessment.createDate}</td>
+                        <%--<td>${assessment.createDate}</td>--%>
+                        <td><fmt:formatDate value="${assessment.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                         <%--<td>--%>
 
                             <%--<a class="btn btn-info btn-xs" title="查看分配详情" onclick="doViewDetail(${assessment.assessmentId})" >分配详情</a>--%>
@@ -89,7 +90,7 @@
             fit: false, //datagrid自适应宽度
             fitColumn: false, //列自适应宽度
             striped: true, //行背景交换
-            nowap: false //列内容多时自动折至第二行
+            nowrap: false //列内容多时自动折至第二行
             ,rownumbers:true
             ,filterBtnIconCls:'icon-filter'
                     ,remoteSort:false,

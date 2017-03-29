@@ -367,7 +367,7 @@ public class UserController extends BaseController {
             Staff staff = userService.findStaff((String) subject.getPrincipal());
             String areaId = userService.findAreaByStaff(staff.getCssStaffNumber());
             List<AppYdbpAreaZwstaff> staffs = userService.findZWStaffByArea(Long.parseLong(areaId));
-            ModelAndView mv = new ModelAndView("dceozonestaff");
+            ModelAndView mv = new ModelAndView("areazonestaff");
             mv.getModel().put("staffs",staffs);
             return mv;
         } catch (Exception e){

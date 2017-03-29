@@ -182,14 +182,16 @@ public class AssessmentController extends BaseController {
         if (staff == null){
             throw new RuntimeException("用户不存在!");
         }
-        String zoneId = userService.findZoneByStaff(staff.getCssStaffNumber());
-        if (zoneId == null){
+        List<String> zoneIds = userService.findZoneByStaff(staff.getCssStaffNumber());
+        if (zoneIds.size() == 0){
             ModelAndView mv = new ModelAndView("error");
             mv.getModel().put("message","该工号未挂载到相应片区!");
             return mv;
         }
         ModelAndView mv = new ModelAndView("myassessmentlist");
-        List<Assessment> assessments = assessmentService.findAssessmentByZone(Long.parseLong(zoneId));
+        List<Assessment> assessments = new ArrayList<>();
+        for (String zoneId:zoneIds)
+            assessments.addAll(assessmentService.findAssessmentByZone(Long.parseLong(zoneId)));
         mv.getModel().put("assessments",assessments);
         return mv;
     }
@@ -336,14 +338,7 @@ public class AssessmentController extends BaseController {
                 return;
             }
 
-            /*Staff staff = userService.findStaff((String) subject.getPrincipal());
-            AppYdbpAreaZwstaff zwstaff = userService.findStaffByCssNumber(staff.getCssStaffNumber());
 
-            List<StaffAssessment> staffs = assessmentService.findStaffAssessmentByZone(zwstaff.getAreaIdTm());
-            if (staffs.size()>0) {
-                out.write("{绩效表已经反馈}");
-                return;
-            }*/
             List<HashMap> list = JSON.parseArray (req, HashMap.class);
             List<StaffAssessment> assessmentList = new ArrayList<>();
             double sum = 0;
@@ -404,16 +399,26 @@ public class AssessmentController extends BaseController {
             return error;
         }
         if (assessmentId == 0){
-            AppYdbpAreaZwstaff zwstaff = userService.findStaffByCssNumber(staff.getCssStaffNumber());
-            if (zwstaff == null){
+            List<AppYdbpAreaZwstaff> zwstaffs = userService.findStaffByCssNumber(staff.getCssStaffNumber());
+            if (zwstaffs.size() == 0 ){
                 ModelAndView error = new ModelAndView("error");
                 error.getModel().put("message","工号无对应片区!");
                 return error;
             }
             //查看全片区的考核表
-            List<StaffAssessment> staffs = assessmentService.findStaffAssessmentByZone(zwstaff.getAreaIdTm());
+            Map zoneMap = new HashMap();
+            List<StaffAssessment> staffs = new ArrayList<>();
+            for (AppYdbpAreaZwstaff zwstaff : zwstaffs) {
+                List<StaffAssessment> list = assessmentService.findStaffAssessmentByZone(zwstaff.getAreaIdTm());
+                staffs.addAll(list);
+                for (StaffAssessment staffAssessment:list){
+                    zoneMap.put(staffAssessment.getAssessmentId(),zwstaff.getAreaNameTm());
+                }
+            }
             ModelAndView mv = new ModelAndView("mystaffassessment");
-            mv.getModel().put("zoneName",zwstaff.getAreaNameTm());
+
+
+            mv.getModel().put("zoneNames",zoneMap);
             mv.getModel().put("staffAssessments",staffs);
             return mv;
         }
@@ -478,14 +483,24 @@ public class AssessmentController extends BaseController {
 
     @RequestMapping("myassessmentsignature")
     public ModelAndView myceoAssessmentSignature(@RequestParam("assessmentid") int assessmentId){
+        Subject subject = SecurityUtils.getSubject();
+        Staff staff = userService.findStaff((String) subject.getPrincipal());
         Assessment assessment = assessmentService.getAssessment(assessmentId);
-        if (assessment == null || assessment.getState().equals("END")){
-            //throw  new RuntimeException("找不到相应考核项");
-            return new ModelAndView("forward:myuploadsignature");
+
+        if (assessment == null  ){
+            throw  new UnsupportedOperationException("找不到相应考核项");
+            //return new ModelAndView("forward:myuploadsignature");
         }
         AssessmentSignature signature = assessmentService.findSignature(assessmentId);
         if (signature == null){
-            return new ModelAndView("forward:myuploadsignature");
+            if (assessmentService.existsStaffAssessment(Long.valueOf(staff.getCssStaffNumber()),assessmentId)>0){
+                //自己是片区CEO，直接转上传界面
+                return new ModelAndView("forward:myuploadsignature");
+            }
+            else {
+                throw new UnsupportedOperationException("签收表未上传!"+HtmlHelper.HTML_GO_BACK);
+            }
+
         }
         List<StaffAssessment> staffs = assessmentService.findAssessmentById(assessmentId);
 
@@ -811,8 +826,19 @@ public class AssessmentController extends BaseController {
             assessments = assessmentService.findStaffAssessmentForAreaAndCycle(Long.parseLong(areaId),cycle) ;
         else
             assessments = new ArrayList<>();
+        double totalReward=0,averageScore=0,personalReward=0;
+        for (AssessmentWithDetail assessment:assessments){
+            totalReward += assessment.getDoubleReward().doubleValue();
+            averageScore += assessment.getScore().doubleValue();
+            for (StaffAssessment sa :assessment.getStaffAssessmentList())
+                personalReward += sa.getPersonalAmount().doubleValue();
+        }
+        averageScore = assessments.size()>0?averageScore/assessments.size():averageScore;
         mv.getModel().put("assessments",assessments);
         mv.getModel().put("cycles",cycles);
+        mv.getModel().put("totalReward",totalReward);
+        mv.getModel().put("averageScore",averageScore);
+        mv.getModel().put("personalReward",personalReward);
         return mv;
     }
 
@@ -822,7 +848,7 @@ public class AssessmentController extends BaseController {
      * @return
      */
     @RequestMapping("areaassessmentlist")
-    public ModelAndView areaAssessmentTodo(@RequestParam(value = "billingcycle",required = false) int billingCycle){
+    public ModelAndView areaAssessmentList(@RequestParam(value = "billingcycle",required = false) int billingCycle){
         Subject subject = SecurityUtils.getSubject();
         String username = (String) subject.getPrincipal();
         Staff staff = userService.findStaff(username);
@@ -837,9 +863,14 @@ public class AssessmentController extends BaseController {
         ModelAndView mv = new ModelAndView("areaassessmentlist");
         List<Assessment> assessments = billingCycle == 0 ?   new ArrayList<Assessment>() :
                 assessmentService.findAssessmentByArea (Long.parseLong(areaId),billingCycle);
+        double totalReward = 0;
+        for (Assessment assessment:assessments){
+            totalReward += assessment.getDoubleReward().doubleValue();
+        }
         mv.getModel().put("assessments",assessments);
         List<BillingCycle> cycles = assessmentService.findAllCycles();
         mv.getModel().put("cycles",cycles);
+        mv.getModel().put("totalReward",totalReward);
         return mv;
     }
 }

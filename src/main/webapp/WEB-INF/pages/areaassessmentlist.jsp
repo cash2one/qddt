@@ -38,10 +38,10 @@
                 <tr>
                     <th data-options="field:'assessmentId',width:100">考核编号</th>
                     <th data-options="field:'billingCycle',width:100">考核年月</th>
-                    <th data-options="field:'districtName',width:100">分局</th>
-                    <th data-options="field:'zoneName',width:100">片区</th>
-                    <th data-options="field:'doubleReward',width:100">总金额</th>
-                    <th data-options="field:'state',width:100">状态</th>
+                    <th data-options="field:'districtName',width:100,sortable:true">分局</th>
+                    <th data-options="field:'zoneName',width:100,sortable:true">片区</th>
+                    <th data-options="field:'doubleReward',width:100,sortable:true">总金额</th>
+                    <th data-options="field:'state',width:100,sortable:true">状态</th>
                     <th data-options="field:'stateDate',width:150">时间</th>
                     <th data-options="field:'operation',width:150">操作</th>
                 </tr>
@@ -61,7 +61,7 @@
                             <c:if test="${assessment.state=='AUD'}">已审核</c:if>
                             <c:if test="${assessment.state=='CLS'}">已关闭(人工)</c:if>
                             <c:if test="${assessment.state=='END'}">已结束</c:if></td>
-                        <td>${assessment.createDate}</td>
+                        <td><fmt:formatDate value="${assessment.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                         <td>
 
                             <c:if test="${assessment.state!='REP'}">
@@ -109,6 +109,8 @@
     </div>  <!-- 对话框 -->
 
 </div>
+<script type="text/javascript" src="/js/datagrid-filter.js"></script>
+<script type="text/javascript" src="/js/datagrid-helper.js"></script>
 <script type="text/javascript" >
     var gassessmentid = 0;
     $(function(){
@@ -131,7 +133,23 @@
                     $('#dd').dialog('close');
                 }
             }]
-        })
+        });
+
+        //设置table的footer
+        var dg=$('#dg').datagrid({
+            fit: false, //datagrid自适应宽度
+            fitColumn: true, //列自适应宽度
+            striped: true, //行背景交换
+            nowrap: false //列内容多时自动折至第二行
+            , rownumbers: true
+            , filterBtnIconCls: 'icon-filter'
+            ,remoteSort:false
+            ,multiSort:true
+            ,showFooter:true
+        });
+        dg.datagrid('enableFilter');
+        dg.datagrid('reloadFooter',
+                [{"doubleReward":"${totalReward}","assessmentId":"合计:"}]);
     });
 
     function doViewStaffItem(assessmentId) {

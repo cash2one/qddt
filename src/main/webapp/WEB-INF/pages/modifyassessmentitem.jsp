@@ -73,17 +73,17 @@
             pagination: false, //显示分页
             pageSize: 15, //页大小
             pageList: [15, 30, 45, 60], //页大小下拉选项此项各value是pageSize的倍数
-            fit: true, //datagrid自适应宽度
-            fitColumn: true, //列自适应宽度
+            fit: false, //datagrid自适应宽度
+            fitColumn: false, //列自适应宽度
             striped: true, //行背景交换
-            nowap: true, //列内容多时自动折至第二行
+            nowrap : false, //列内容多时自动折至第二行
             emptyMsg: '无记录',
             idField: 'id', //主键
             singleSelect:true,
             remoteSort:false,
-            multiSort:true,
+            multiSort:false,
             columns: [[//显示的列
-                {field: 'id', title: '编号', width: 100},
+                {field: 'id', title: '编号', width: 70},
                 { field: 'name', title: '考核名称', width: 100, sortable: true,
                     editor: { type: 'textbox', options: {  required: true} }
                 },
@@ -98,13 +98,13 @@
                         if (value == n.na) return n;
                     })}*/
                 },
-                { field: 'percent', title: '考核项占比', width: 100, sortable: true,
+                { field: 'percent', title: '考核项占比', width: 70, sortable: true,
                     editor: { type: 'numberbox', options: {precision:0,  required: true} }
                 },
-                { field: 'score', title: '考核总分', width: 100, sortable: true,
+                { field: 'score', title: '考核总分', width: 70, sortable: true,
                     editor: { type: 'numberbox', options: {precision:0,  required: true} }
                 },
-                { field: 'detail', title: '考核详情', width: 100, sortable: true,
+                { field: 'detail', title: '考核详情', width: 200, sortable: true,
                     editor: { type: 'textbox', options: {  required: true} }
                 },
                 { field: 'categoryId', title: '考核项分组', width: 100, sortable: true,

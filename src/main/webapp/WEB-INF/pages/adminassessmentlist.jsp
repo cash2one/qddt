@@ -63,7 +63,8 @@
                             <c:if test="${assessment.state=='AUD'}">已审核</c:if>
                             <c:if test="${assessment.state=='CLS'}">已关闭(人工)</c:if>
                             <c:if test="${assessment.state=='END'}">已结束</c:if></td>
-                        <td>${assessment.createDate}</td>
+                        <%--<td>${assessment.createDate}</td>--%>
+                        <td><fmt:formatDate value="${assessment.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                         <td>
 
                             <a class="btn btn-info btn-xs" title="查看分配详情" onclick="doViewDetail(${assessment.assessmentId})" >分配详情</a>

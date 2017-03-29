@@ -55,18 +55,18 @@
 
     $( document).ready(function(){
         var dg = $('#dg');
-        /*dg.datagrid({
+        dg.datagrid({
             iconCls: 'icon-save', //图标
-            pagination: true, //显示分页
+            pagination: false, //显示分页
             pageSize: 15, //页大小
             pageList: [15, 30, 45, 60], //页大小下拉选项此项各value是pageSize的倍数
             fit: true, //datagrid自适应宽度
             fitColumn: true, //列自适应宽度
             striped: true, //行背景交换
-            nowap: true, //列内容多时自动折至第二行
+            nowap: false, //列内容多时自动折至第二行
             emptyMsg: '无记录',
-            border: false,
-        });*/	// create datagrid
+            border: true,
+        });	// create datagrid
         //dg.datagrid('enableFilter');
     });
 

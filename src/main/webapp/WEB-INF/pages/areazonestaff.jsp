@@ -23,12 +23,12 @@
                data-options="singleSelect:true,collapsible:true  ">
             <thead>
                 <tr>
-                    <th data-options="field:'cssNumber',width:150">CSS工号</th>
-                    <th data-options="field:'areaName',width:150">区域</th>
-                    <th data-options="field:'districtName',width:150">分局</th>
-                    <th data-options="field:'zoneName',width:150">片区</th>
-                    <th data-options="field:'username',width:150">姓名</th>
-                    <th data-options="field:'operation',width:150">操作</th>
+                    <th data-options="field:'cssNumber',width:150,sortable:true">CSS工号</th>
+                    <th data-options="field:'areaName',width:150,sortable:true">区域</th>
+                    <th data-options="field:'districtName',width:150,sortable:true">分局</th>
+                    <th data-options="field:'zoneName',width:150,sortable:true">片区</th>
+                    <th data-options="field:'username',width:150,sortable:true">姓名</th>
+                    <th data-options="field:'operation',width:150,sortable:true">操作</th>
                 </tr>
             </thead>
             <tbody>
@@ -51,23 +51,24 @@
 
 </div>
 <script type="text/javascript" src="/js/datagrid-filter.js" ></script>
+<script type="text/javascript" src="/js/datagrid-helper.js"></script>
 <script type="text/javascript" >
 
     $( document).ready(function(){
         var dg = $('#dg');
-        /*dg.datagrid({
-            iconCls: 'icon-save', //图标
-            pagination: true, //显示分页
-            pageSize: 15, //页大小
-            pageList: [15, 30, 45, 60], //页大小下拉选项此项各value是pageSize的倍数
-            fit: true, //datagrid自适应宽度
-            fitColumn: true, //列自适应宽度
+        dg.datagrid({
+            fit: false, //datagrid自适应宽度
+            fitColumn: false, //列自适应宽度
             striped: true, //行背景交换
-            nowap: true, //列内容多时自动折至第二行
-            emptyMsg: '无记录',
-            border: false,
-        });*/	// create datagrid
-        dg.datagrid().datagrid('enableFilter',[]).datagrid('resize');
+            nowrap: false //列内容多时自动折至第二行
+            ,rownumbers:true
+            ,filterBtnIconCls:'icon-filter'
+            ,remoteSort:false,
+            multiSort:true
+        });	// create datagrid
+        dg.datagrid('enableFilter').datagrid('resize');
+        /*dg.datagrid('enableFilter',[{field:'cssNumber',
+                type:'numberbox'}]).datagrid('resize');*/
     });
 
     function doViewDetail(cssNumber) {

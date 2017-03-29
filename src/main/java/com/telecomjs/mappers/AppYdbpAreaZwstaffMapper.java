@@ -29,7 +29,7 @@ public interface AppYdbpAreaZwstaffMapper {
 
     List<AppYdbpAreaZwstaff> findStaffByZone(@Param("zoneId") Long zoneId);
 
-    AppYdbpAreaZwstaff findStaffByCssNumber(@Param("cssNumber") String cssNumber);
+    List<AppYdbpAreaZwstaff> findStaffByCssNumber(@Param("cssNumber") String cssNumber);
 
     List<AppYdbpAreaZwstaff> findZWStaffByStaffId(@Param("staffId") Integer staffId);
 

@@ -19,7 +19,7 @@
         <!-- Default panel contents -->
 
         <!-- Table -->
-        <table title="分配表详情" id="dg" class="easyui-datagrid" title="Basic DataGrid" style="width:100%;height:400px"
+        <table title="分配表详情" id="dg" class="easyui-datagrid"  style="width:100%;height:400px"
                data-options="singleSelect:true,collapsible:true  ">
             <thead>
                 <tr>

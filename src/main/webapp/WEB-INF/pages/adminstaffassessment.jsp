@@ -84,7 +84,8 @@
                                 <c:if test="${assessment.state=='AUD'}">已审核</c:if>
                                 <c:if test="${assessment.state=='CLS'}">已关闭(人工)</c:if>
                                 <c:if test="${assessment.state=='END'}">已结束</c:if></td>
-                            <td>${assessment.createDate}</td>
+                            <%--<td>${assessment.createDate}</td>--%>
+                            <td><fmt:formatDate value="${assessment.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                             <!-- 分配详情 -->
                             <td>${staffs.cssStaffId}</td>
                             <td>${staffs.roleName}</td>
@@ -122,7 +123,8 @@
                                 <c:if test="${assessment.state=='AUD'}">已审核</c:if>
                                 <c:if test="${assessment.state=='CLS'}">已关闭(人工)</c:if>
                                 <c:if test="${assessment.state=='END'}">已结束</c:if></td>
-                            <td>${assessment.createDate}</td>
+                            <%--<td>${assessment.createDate}</td>                            --%>
+                            <td><fmt:formatDate value="${assessment.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                             <!-- 分配详情 -->
                             <td></td>
                             <td></td>

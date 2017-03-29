@@ -41,7 +41,7 @@
                         <td  >${audit.nodeStaff}</td>
                         <td  >${audit.submission}</td>
                         <td  >${audit.remark}</td>
-                        <td  >${audit.stateDate}</td>
+                        <td  ><fmt:formatDate value="${audit.stateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                     </tr>
                 </c:forEach>
             </tbody>
@@ -56,7 +56,12 @@
     $( document).ready(function(){
         var dg = $('#dg');
         dg.datagrid({nowrap: false,
-            striped: true});
+            fit: true, //datagrid自适应宽度
+            fitColumn: false, //列自适应宽度
+            striped: true, //行背景交换
+            nowap: false, //列内容多时自动折至第二行
+            emptyMsg: '无记录',
+            border: true });
     });
 
 </script>

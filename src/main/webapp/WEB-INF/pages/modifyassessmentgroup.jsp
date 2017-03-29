@@ -59,7 +59,7 @@
             fit: true, //datagrid自适应宽度
             fitColumn: false, //列自适应宽度
             striped: true, //行背景交换
-            nowap: true, //列内容多时自动折至第二行
+            nowap: false, //列内容多时自动折至第二行
             emptyMsg: '无记录',
             idField: 'id', //主键
             singleSelect:true,

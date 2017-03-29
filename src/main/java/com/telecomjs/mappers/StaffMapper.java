@@ -78,7 +78,7 @@ public interface StaffMapper {
     List<Staff> findStaffWithoutCss();
     List<Staff> findAll();
 
-    String findZoneByStaff(@Param("cssNumber") String cssNumber);
+    List<String> findZoneByStaff(@Param("cssNumber") String cssNumber);
 
     List<Staff> findZoneStaffById(@Param("staffId") Integer staffId);
 

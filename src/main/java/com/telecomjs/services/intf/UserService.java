@@ -34,9 +34,9 @@ public interface UserService {
 
     List<Staff> findAreaStaff(long id,AreaTreeNode.NodeType type);
 
-    String findZoneByStaff(String cssNumber);
+    List<String> findZoneByStaff(String cssNumber);
 
-    AppYdbpAreaZwstaff findStaffByCssNumber(String cssNumber);
+    List<AppYdbpAreaZwstaff> findStaffByCssNumber(String cssNumber);
 
     List<AppYdbpAreaZwstaff> findStaffbyZone(Long zoneId);
 

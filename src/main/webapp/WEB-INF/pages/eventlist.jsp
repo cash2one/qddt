@@ -10,7 +10,7 @@
         <table id="dg" class="easyui-datagrid" title="考核上报列表" >
             <thead>
                 <tr>
-                    <th data-options="field:'id1',width:100">EventID</th>
+                    <th data-options="field:'id1',width:100">ID</th>
                     <th data-options="field:'id2',width:100">考核年月</th>
                     <th data-options="field:'id3',width:100">记录数</th>
                     <th data-options="field:'id4',width:100">总金额</th>
@@ -31,7 +31,7 @@
                             <c:if test="${event.state=='REP'}">已通知</c:if>
                             <c:if test="${event.state=='CLS'}">已关闭(人工)</c:if>
                             <c:if test="${event.state=='END'}">已结束</c:if></td>
-                        <td>${event.stateDate}</td>
+                        <td><fmt:formatDate value="${event.stateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                         <td>
                             <c:if test="${event.state=='OPN'}">
                                 <a class="btn btn-info btn-xs" title="下发并通知CEO分配绩效" onclick="doSubscriber(${event.eventId})" >通知CEO</a>
