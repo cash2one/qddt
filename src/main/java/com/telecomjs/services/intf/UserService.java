@@ -1,7 +1,6 @@
 package com.telecomjs.services.intf;
 
 import com.telecomjs.beans.AppYdbpAreaZwstaff;
-import com.telecomjs.beans.BillingCycle;
 import com.telecomjs.beans.Role;
 import com.telecomjs.beans.Staff;
 import com.telecomjs.datagrid.AreaTreeNode;
@@ -46,7 +45,7 @@ public interface UserService {
 
 
     //分局管理员 查询分局信息
-    String findDistrictByStaff(String cssNumber);
+    List<String> findDistrictByStaff(String cssNumber);
     List<AppYdbpAreaZwstaff> findZWStaffByDistrict(long districtId);
     //区局支撑用 查询区域信息
     String findAreaByStaff(String cssStaffNumber);

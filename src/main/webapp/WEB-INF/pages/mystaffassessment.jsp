@@ -76,12 +76,16 @@
             nowap: true, //列内容多时自动折至第二行
             emptyMsg: '无记录',
             border: true,
+            showFooter:true,
             onDblClickRow: function (rowIndex, rowData) {
                 //双击开启编辑行
                 doViewDetail(rowData.id);
             },
         });// create datagrid
         //dg.datagrid('enableFilter');
+        dg.datagrid('reloadFooter',
+                [{"amount":'<fmt:formatNumber value="${personalReward}" pattern="0.00"/> ',"assid":"合计:"}]);
+
     });
     function doFeedback(staffAssessmentId) {
         //跳转到新窗口

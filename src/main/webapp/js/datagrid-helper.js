@@ -2,6 +2,7 @@
  * Created by zark on 17/3/20.
  */
 (function($) {
+
     $.downloadExcel = function (url, data, method){    // 获得url和data
         if( url && data ){
             // data 是 string 或者 array/object
@@ -59,6 +60,74 @@
         });
     };
 
+    $.resizeGridWithFooter = function (data) {
+        //datagrid头部 table 的第一个tr 的td们，即columns的集合
+        var headerTds = $(".datagrid-view2 .datagrid-header-inner table tr:first-child").children();
+        //datagrid主体 table 的第一个tr 的td们，即第一个数据行
+        var bodyTds = $(".datagrid-view2 .datagrid-body table tr:first-child").children();
+        var footerTds = $(".datagrid-view2 .datagrid-footer .datagrid-footer-inner table tr:first-child").children();
+        var totalWidth = 0; //合计宽度，用来为datagrid头部和主体设置宽度
+        //循环设置宽度
+        bodyTds.each(function (i, obj) {
+            var headerTd = $(headerTds.get(i));
+            var bodyTd = $(bodyTds.get(i));
+            var footerTd = $(footerTds.get(i));
+            $("div:first-child", headerTds.get(i)).css("text-align", "center");
+            var headerTdWidth = headerTd.width(); //获取第i个头部td的宽度
+            //这里加5个像素 是因为数据主体我们取的是第一行数据，不能确保第一行数据宽度最宽，预留5个像素。有兴趣的朋友可以先判断最大的td宽度都在进行设置
+            var bodyTdWidth = bodyTd.width() + 5;
+            var width = 0;
+            //如果头部列名宽度比主体数据宽度宽，则它们的宽度都设为头部的宽度。反之亦然
+            if (headerTdWidth > bodyTdWidth) {
+                width = headerTdWidth;
+                bodyTd.width(width);
+                headerTd.width(width);
+                footerTd.width(width);
+                totalWidth += width;
+            } else {
+                width = bodyTdWidth;
+                headerTd.width(width);
+                bodyTd.width(width);
+                footerTd.width(width);
+                totalWidth += width;
+            }
+        });
+        var headerTable = $(".datagrid-view2 .datagrid-header-inner table:first-child");
+        var bodyTable = $(".datagrid-view2 .datagrid-body table:first-child");
+        var footerTable = $(".datagrid-view2 .datagrid-footer table:first-child");
+        //循环完毕即能得到总得宽度设置到头部table和数据主体table中
+        headerTable.width(totalWidth);
+        bodyTable.width(totalWidth);
+        footerTable.width(totalWidth);
+        bodyTds.each(function (i, obj) {
+            var headerTd = $(headerTds.get(i));
+            var bodyTd = $(bodyTds.get(i));
+            var footerTd = $(footerTable.get(i));
+            var headerTdWidth = headerTd.width();
+            bodyTd.width(headerTdWidth);
+            footerTd.width(headerTdWidth);
+        });
+        /*//footer部分
+        var footTds = $(".datagrid-view2 .datagrid-footer .datagrid-footer-inner table tr:first-child").children();
+        footTds.each(function (i, obj) {
+            var headerTd = $(headerTds.get(i));
+            var footTd = $(bodyTds.get(i));
+            var headerTdWidth = headerTd.width(); //获取第i个头部td的宽度
+            //这里加5个像素 是因为数据主体我们取的是第一行数据，不能确保第一行数据宽度最宽，预留5个像素。有兴趣的朋友可以先判断最大的td宽度都在进行设置
+            var bodyTdWidth = footTd.width() + 5;
+            console.info("widths:",headerTdWidth,bodyTdWidth);
+            var width = 0;
+            //如果头部列名宽度比主体数据宽度宽，则它们的宽度都设为头部的宽度。反之亦然
+            width = headerTdWidth;
+            footTd.width(width);
+            totalWidth += width;
+        });
+        //设置footer总宽度
+        var footTable = $(".datagrid-view2 .datagrid-footer-inner  table:first-child");
+        //循环完毕即能得到总得宽度设置到头部table和数据主体table中
+        footTable.width(totalWidth);*/
+    };
+
     $.resizeFooterGrid = function (data) {
         //datagrid头部 table 的第一个tr 的td们，即columns的集合
         var headerTds = $(".datagrid-view2 .datagrid-header-inner table tr:first-child").children();
@@ -69,7 +138,7 @@
         bodyTds.each(function (i, obj) {
             var headerTd = $(headerTds.get(i));
             var bodyTd = $(bodyTds.get(i));
-            $("div:first-child", headerTds.get(i)).css("text-align", "center");
+            // $("div:first-child", headerTds.get(i)).css("text-align", "center");
             var headerTdWidth = headerTd.width(); //获取第i个头部td的宽度
             //这里加5个像素 是因为数据主体我们取的是第一行数据，不能确保第一行数据宽度最宽，预留5个像素。有兴趣的朋友可以先判断最大的td宽度都在进行设置
             var bodyTdWidth = bodyTd.width() + 5;
@@ -78,13 +147,10 @@
             //如果头部列名宽度比主体数据宽度宽，则它们的宽度都设为头部的宽度。反之亦然
             width = headerTdWidth;
             bodyTd.width(width);
-            headerTd.width(width);
             totalWidth += width;
         });
-        var headerTable = $(".datagrid-view2 .datagrid-header-inner table:first-child");
-        var bodyTable = $(".datagrid-footer .datagrid-footer-inner  table:first-child");
+        var bodyTable = $(".datagrid-view2 .datagrid-footer-inner  table:first-child");
         //循环完毕即能得到总得宽度设置到头部table和数据主体table中
-        headerTable.width(totalWidth);
         bodyTable.width(totalWidth);
         /*bodyTds.each(function (i, obj) {
             var headerTd = $(headerTds.get(i));

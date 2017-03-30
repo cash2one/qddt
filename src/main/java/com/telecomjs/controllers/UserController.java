@@ -27,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -345,8 +346,11 @@ public class UserController extends BaseController {
         try {
             Subject subject = SecurityUtils.getSubject();
             Staff staff = userService.findStaff((String) subject.getPrincipal());
-            String districtId = userService.findDistrictByStaff(staff.getCssStaffNumber());
-            List<AppYdbpAreaZwstaff> staffs = userService.findZWStaffByDistrict(Long.parseLong(districtId));
+            List<String> districtIds = userService.findDistrictByStaff(staff.getCssStaffNumber());
+            List<AppYdbpAreaZwstaff> staffs = new ArrayList<>();
+            for (String districtId : districtIds) {
+                staffs.addAll(userService.findZWStaffByDistrict(Long.parseLong(districtId)));
+            }
             ModelAndView mv = new ModelAndView("dceozonestaff");
             mv.getModel().put("staffs",staffs);
             return mv;

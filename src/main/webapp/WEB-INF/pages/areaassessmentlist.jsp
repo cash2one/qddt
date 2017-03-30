@@ -40,7 +40,7 @@
                     <th data-options="field:'billingCycle',width:100">考核年月</th>
                     <th data-options="field:'districtName',width:100,sortable:true">分局</th>
                     <th data-options="field:'zoneName',width:100,sortable:true">片区</th>
-                    <th data-options="field:'doubleReward',width:100,sortable:true">总金额</th>
+                    <th data-options="field:'doubleReward',width:100,sortable:true,sorter:numberSort">总金额</th>
                     <th data-options="field:'state',width:100,sortable:true">状态</th>
                     <th data-options="field:'stateDate',width:150">时间</th>
                     <th data-options="field:'operation',width:150">操作</th>
@@ -149,7 +149,8 @@
         });
         dg.datagrid('enableFilter');
         dg.datagrid('reloadFooter',
-                [{"doubleReward":"${totalReward}","assessmentId":"合计:"}]);
+                [{"doubleReward": '<fmt:formatNumber value="${totalReward}" pattern="0.00"/> ',"assessmentId":"合计:"}]);
+
     });
 
     function doViewStaffItem(assessmentId) {

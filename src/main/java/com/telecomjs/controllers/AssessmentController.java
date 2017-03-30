@@ -364,7 +364,9 @@ public class AssessmentController extends BaseController {
                 sum += new BigDecimal((String) map.get("amount")).doubleValue();
             }
 
-            if (sum !=  assessment.getDoubleReward().doubleValue())
+            //if (sum !=  assessment.getDoubleReward().doubleValue())
+            //if (!new Double(sum).equals(assessment.getDoubleReward()))
+            if (!AssessmentHelper.equalsReward(sum,assessment.getDoubleReward().doubleValue()))
                 validateString += "{分配绩效不等于片区应得绩效}";
 
             if (ceoReward > assessment.getDoubleReward().doubleValue()*0.4d)
@@ -416,10 +418,13 @@ public class AssessmentController extends BaseController {
                 }
             }
             ModelAndView mv = new ModelAndView("mystaffassessment");
-
+            double personalReward=0;
+            for (StaffAssessment sa :staffs)
+                personalReward += sa.getPersonalAmount().doubleValue();
 
             mv.getModel().put("zoneNames",zoneMap);
             mv.getModel().put("staffAssessments",staffs);
+            mv.getModel().put("personalReward",personalReward);
             return mv;
         }
         Assessment assessment = assessmentService.getAssessment(assessmentId);
@@ -429,9 +434,13 @@ public class AssessmentController extends BaseController {
             return error;
         }
         List<StaffAssessment> staffs = assessmentService.findAssessmentById(assessmentId);
+        double personalReward=0;
+        for (StaffAssessment sa :staffs)
+            personalReward += sa.getPersonalAmount().doubleValue();
         ModelAndView mv = new ModelAndView("mystaffassessment");
         mv.getModel().put("zoneName",assessment.getZoneName());
         mv.getModel().put("staffAssessments",staffs);
+        mv.getModel().put("personalReward",personalReward);
         return mv;
 
     }
@@ -557,8 +566,14 @@ public class AssessmentController extends BaseController {
             AuditNodeHelper.SuggestionType suggestionType = AuditNodeHelper.SuggestionType.valueOf(suggestion);
             Subject subject = SecurityUtils.getSubject();
             Staff staff = userService.findStaff((String) subject.getPrincipal());
-            String districtId = userService.findDistrictByStaff(staff.getCssStaffNumber());
-            boolean hasOwnedZone = assessmentService.districtHasAssessment(Long.valueOf(districtId),assessmentId);
+            List<String> districtIds = userService.findDistrictByStaff(staff.getCssStaffNumber());
+            boolean hasOwnedZone = false;
+            for (String districtId : districtIds){
+                hasOwnedZone = assessmentService.districtHasAssessment(Long.valueOf(districtId),assessmentId);
+                if (hasOwnedZone)
+                    break;
+            }
+
             if (staff == null || !hasOwnedZone){
                 out.write("当前账号无权限操作!");
                 return;
@@ -748,14 +763,25 @@ public class AssessmentController extends BaseController {
         if (staff == null){
             throw new RuntimeException("用户不存在!");
         }
-        String districtId = userService.findDistrictByStaff (staff.getCssStaffNumber());
-        if (districtId == null){
+        List<String> districtIds = userService.findDistrictByStaff (staff.getCssStaffNumber());
+        if (districtIds.size() == 0){
             throw new UnsupportedOperationException("该工号未挂载到相应分局!");
         }
 
         ModelAndView mv = new ModelAndView("dceoassessmenttodo");
-        List<Assessment> assessments = assessmentService.findDCEOToDoAssessments(Long.parseLong(districtId) );
+        List<Assessment> assessments = new ArrayList<>();
+        for (String districtId : districtIds) {
+            assessments.addAll( assessmentService.findDCEOToDoAssessments(Long.parseLong(districtId)));
+        }
+        double totalReward=0,totalDoubleReward=0;
+        for (Assessment assessment:assessments){
+            totalDoubleReward += assessment.getDoubleReward().doubleValue();
+            totalReward += assessment.getReward().doubleValue();
+        }
         mv.getModel().put("assessments",assessments);
+        mv.getModel().put("totalReward",totalReward);
+        mv.getModel().put("totalDoubleReward",totalDoubleReward);
+
         return mv;
     }
 
@@ -772,17 +798,24 @@ public class AssessmentController extends BaseController {
         if (staff == null){
             throw new RuntimeException("用户不存在!");
         }
-        String districtId = userService.findDistrictByStaff(staff.getCssStaffNumber());
-        if (districtId == null){
-            throw new UnsupportedOperationException("该工号未挂载到相应分局!");
-        }
+        List<Assessment> assessments = new ArrayList<Assessment>() ;
+        if (billingCycle > 0) {
 
+            List < String > districtIds = userService.findDistrictByStaff(staff.getCssStaffNumber());
+            if (districtIds.size() == 0) {
+                throw new UnsupportedOperationException("该工号未挂载到相应分局!");
+            }
+            for (String districtId : districtIds) {
+                assessments.addAll(assessmentService.findAssessmentByDistrict(Long.parseLong(districtId), billingCycle));
+            }
+        }
         ModelAndView mv = new ModelAndView("dceoassessmentlist");
-        List<Assessment> assessments = billingCycle == 0 ?   new ArrayList<Assessment>() :
-                assessmentService.findAssessmentByDistrict(Long.parseLong(districtId),billingCycle);
         mv.getModel().put("assessments",assessments);
         List<BillingCycle> cycles = assessmentService.findAllCycles();
         mv.getModel().put("cycles",cycles);
+        Map totalMap = AssessmentHelper.makeSummary(assessments);
+        mv.getModel().put("totalReward",totalMap.get("totalReward"));
+        mv.getModel().put("totalDoubleReward",totalMap.get("totalDoubleReward"));
         return mv;
     }
 
@@ -790,19 +823,25 @@ public class AssessmentController extends BaseController {
     public ModelAndView dceoStaffAssessment(@RequestParam(value = "billingcycle",required = false) int cycle){
         Subject subject = SecurityUtils.getSubject();
         Staff staff = userService.findStaff((String) subject.getPrincipal());
-        String districtId = userService.findDistrictByStaff(staff.getCssStaffNumber());
-        if (districtId == null){
+        List<String> districtIds = userService.findDistrictByStaff(staff.getCssStaffNumber());
+        if (districtIds.size() == 0){
             throw new UnsupportedOperationException("该工号未挂载到相应分局!");
         }
         ModelAndView mv = new ModelAndView("dceostaffassessment");
-        List<AssessmentWithDetail> assessments ;
+        List<AssessmentWithDetail> assessments = new ArrayList<>();
         List<BillingCycle> cycles = assessmentService.findAllCycles();
-        if (cycle > 0)
-            assessments = assessmentService.findStaffAssessmentForDistrictAndCycle(Long.parseLong(districtId),cycle) ;
-        else
-            assessments = new ArrayList<>();
+
+        if (cycle > 0) {
+            for (String districtId : districtIds) {
+                assessments.addAll( assessmentService.findStaffAssessmentForDistrictAndCycle(Long.parseLong(districtId), cycle));
+            }
+        }
         mv.getModel().put("assessments",assessments);
         mv.getModel().put("cycles",cycles);
+        Map totalMap = AssessmentHelper.makeSummaryWithDetail(assessments);
+        mv.getModel().put("totalReward",totalMap.get("totalReward"));
+        mv.getModel().put("averageScore",totalMap.get("averageScore"));
+        mv.getModel().put("personalReward",totalMap.get("personalReward"));
         return mv;
     }
 
@@ -826,19 +865,13 @@ public class AssessmentController extends BaseController {
             assessments = assessmentService.findStaffAssessmentForAreaAndCycle(Long.parseLong(areaId),cycle) ;
         else
             assessments = new ArrayList<>();
-        double totalReward=0,averageScore=0,personalReward=0;
-        for (AssessmentWithDetail assessment:assessments){
-            totalReward += assessment.getDoubleReward().doubleValue();
-            averageScore += assessment.getScore().doubleValue();
-            for (StaffAssessment sa :assessment.getStaffAssessmentList())
-                personalReward += sa.getPersonalAmount().doubleValue();
-        }
-        averageScore = assessments.size()>0?averageScore/assessments.size():averageScore;
+
         mv.getModel().put("assessments",assessments);
         mv.getModel().put("cycles",cycles);
-        mv.getModel().put("totalReward",totalReward);
-        mv.getModel().put("averageScore",averageScore);
-        mv.getModel().put("personalReward",personalReward);
+        Map totalMap = AssessmentHelper.makeSummaryWithDetail(assessments);
+        mv.getModel().put("totalReward",totalMap.get("totalReward"));
+        mv.getModel().put("averageScore",totalMap.get("averageScore"));
+        mv.getModel().put("personalReward",totalMap.get("personalReward"));
         return mv;
     }
 

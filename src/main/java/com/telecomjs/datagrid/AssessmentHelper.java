@@ -3,6 +3,8 @@ package com.telecomjs.datagrid;
 import com.alibaba.fastjson.JSON;
 import com.telecomjs.beans.Assessment;
 import com.telecomjs.beans.AssessmentEvent;
+import com.telecomjs.beans.AssessmentWithDetail;
+import com.telecomjs.beans.StaffAssessment;
 import com.telecomjs.utils.PoiExcelReader;
 import org.apache.log4j.spi.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -113,5 +115,38 @@ public class AssessmentHelper {
         return event;
     }
 
+    public static  boolean equalsReward(double num1,double num2)
+    {
+        if((num1-num2>-0.000001)&&(num1-num2)<0.000001)return true;
+        else return false;
+    }
+
+    public static Map makeSummaryWithDetail(List<AssessmentWithDetail> assessments){
+        double totalReward=0,averageScore=0,personalReward=0;
+        for (AssessmentWithDetail assessment:assessments){
+            totalReward += assessment.getDoubleReward().doubleValue();
+            averageScore += assessment.getScore().doubleValue();
+            for (StaffAssessment sa :assessment.getStaffAssessmentList())
+                personalReward += sa.getPersonalAmount().doubleValue();
+        }
+        averageScore = assessments.size()>0?averageScore/assessments.size():averageScore;
+        Map map  = new HashMap();
+        map.put("totalReward",totalReward);
+        map.put("averageScore",averageScore);
+        map.put("personalReward",personalReward);
+        return map;
+    }
+
+    public static Map makeSummary(List<Assessment> assessments){
+        double totalReward=0,totalDoubleReward=0;
+        for (Assessment assessment:assessments){
+            totalDoubleReward += assessment.getDoubleReward().doubleValue();
+            totalReward += assessment.getReward().doubleValue();
+        }
+        Map map  = new HashMap();
+        map.put("totalDoubleReward",totalDoubleReward);
+        map.put("totalReward",totalReward);
+        return map;
+    }
 
 }

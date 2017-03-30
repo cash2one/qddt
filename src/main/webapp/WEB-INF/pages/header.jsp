@@ -40,6 +40,7 @@
     <script type="text/javascript" src="<%=basePath%>/js/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="<%=basePath%>/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="<%=basePath%>/js/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="<%=basePath%>/js/functions.js"></script>
     <%--<script type="text/javascript" src="<%=basePath%>/js/jquery.datagrid.js"></script>--%>
     <script type="text/javascript">
         /*$(document).ready(function() {

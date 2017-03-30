@@ -1,7 +1,6 @@
 package com.telecomjs.services.impl;
 
 import com.telecomjs.beans.AppYdbpAreaZwstaff;
-import com.telecomjs.beans.BillingCycle;
 import com.telecomjs.beans.Role;
 import com.telecomjs.beans.Staff;
 import com.telecomjs.datagrid.AreaTreeNode;
@@ -14,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
-import static com.telecomjs.datagrid.AreaTreeNode.NodeType.All;
 
 /**
  * Created by zark on 17/3/2.
@@ -108,7 +105,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    public String findDistrictByStaff(String cssNumber) {
+    public List<String> findDistrictByStaff(String cssNumber) {
         return staffMapper.findDistrictByStaff(cssNumber);
     }
 
