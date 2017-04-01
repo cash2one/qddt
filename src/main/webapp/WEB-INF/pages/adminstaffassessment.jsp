@@ -37,23 +37,23 @@
                 <tr>
                     <th data-options="field:'assessmentId',width:100">考核编号</th>
                     <th data-options="field:'billingCycle',width:100">考核年月</th>
-                    <th data-options="field:'areaname',width:100">区域</th>
-                    <th data-options="field:'districtName',width:100">分局</th>
-                    <th data-options="field:'zoneName',width:100">片区</th>
-                    <th data-options="field:'criterion',width:100">考核标准</th>
-                    <th data-options="field:'score',width:100">考核得分</th>
-                    <th data-options="field:'lastReward',width:100">上期预发</th>
-                    <th data-options="field:'lastForwardReward',width:140">上期实际应发奖励</th>
-                    <th data-options="field:'lastSettlement',width:100">上期结算</th>
-                    <th data-options="field:'forwardReward',width:100">本期预发</th>
-                    <th data-options="field:'reward',width:100">本期应发</th>
-                    <th data-options="field:'doubleReward',width:100">双倍激励金额</th>
+                    <th data-options="field:'areaname',width:100,sortable:true">区域</th>
+                    <th data-options="field:'districtName',width:100,sortable:true">分局</th>
+                    <th data-options="field:'zoneName',width:100,sortable:true">片区</th>
+                    <th data-options="field:'criterion',width:100,sortable:true,sorter:numberSort">考核标准</th>
+                    <th data-options="field:'score',width:100,sortable:true,sorter:numberSort">考核得分</th>
+                    <th data-options="field:'lastReward',width:100,sortable:true,sorter:numberSort">上期预发</th>
+                    <th data-options="field:'lastForwardReward',width:140,sortable:true,sorter:numberSort">上期实际应发奖励</th>
+                    <th data-options="field:'lastSettlement',width:100,sortable:true,sorter:numberSort">上期结算</th>
+                    <th data-options="field:'forwardReward',width:100,sortable:true,sorter:numberSort">本期预发</th>
+                    <th data-options="field:'reward',width:100,sortable:true,sorter:numberSort">本期应发</th>
+                    <th data-options="field:'doubleReward',width:100,sortable:true,sorter:numberSort">双倍激励金额</th>
                     <th data-options="field:'state',width:100">状态</th>
-                    <th data-options="field:'stateDate',width:150">时间</th>
-                    <th data-options="field:'cssStaffId',width:150">CSS工号</th>
-                    <th data-options="field:'roleName',width:150">岗位类别</th>
-                    <th data-options="field:'staffName',width:150">姓名</th>
-                    <th data-options="field:'personalReward',width:150">个人绩效</th>
+                    <th data-options="field:'stateDate',width:150,sortable:true">时间</th>
+                    <th data-options="field:'cssStaffId',width:150,sortable:true">CSS工号</th>
+                    <th data-options="field:'roleName',width:150,sortable:true">岗位类别</th>
+                    <th data-options="field:'staffName',width:150,sortable:true">姓名</th>
+                    <th data-options="field:'personalReward',width:150,sortable:true,sorter:numberSort">个人绩效</th>
 
                     <!-- 分配详情 -->
                     <th data-options="field:'operation',width:150">操作</th>

@@ -23,16 +23,16 @@
             <thead>
                 <tr>
                     <th data-options="field:'billingCycle',width:100,deltaWidth:0">考核年月</th>
-                    <th data-options="field:'areaname',width:100,deltaWidth:0">区域</th>
-                    <th data-options="field:'districtName',width:100,deltaWidth:0">分局</th>
-                    <th data-options="field:'score',width:100,deltaWidth:0">考核得分</th>
-                    <th data-options="field:'lastReward',width:100,deltaWidth:0">上期预发</th>
-                    <th data-options="field:'lastForwardReward',width:140,deltaWidth:0">上期实际应发奖励</th>
-                    <th data-options="field:'lastSettlement',width:100,deltaWidth:0">上期结算</th>
-                    <th data-options="field:'forwardReward',width:100,deltaWidth:0">本期预发</th>
-                    <th data-options="field:'reward',width:100,deltaWidth:0">本期应发</th>
-                    <th data-options="field:'doubleReward',width:100,deltaWidth:0">双倍激励金额</th>
-                    <th data-options="field:'state',width:100,deltaWidth:0">状态</th>
+                    <th data-options="field:'areaname',width:100,deltaWidth:0,sortable:true ">区域</th>
+                    <th data-options="field:'districtName',width:100,deltaWidth:0,sortable:true">分局</th>
+                    <th data-options="field:'score',width:100,deltaWidth:0,sortable:true,sorter:numberSort">考核得分</th>
+                    <th data-options="field:'lastReward',width:100,deltaWidth:0,sortable:true,sorter:numberSort">上期预发</th>
+                    <th data-options="field:'lastForwardReward',width:140,deltaWidth:0,sortable:true,sorter:numberSort">上期实际应发奖励</th>
+                    <th data-options="field:'lastSettlement',width:100,deltaWidth:0,sortable:true,sorter:numberSort">上期结算</th>
+                    <th data-options="field:'forwardReward',width:100,deltaWidth:0,sortable:true,sorter:numberSort">本期预发</th>
+                    <th data-options="field:'reward',width:100,deltaWidth:0,sortable:true,sorter:numberSort">本期应发</th>
+                    <th data-options="field:'doubleReward',width:100,deltaWidth:0,sortable:true,sorter:numberSort">双倍激励金额</th>
+                    <th data-options="field:'state',width:100,deltaWidth:0,sortable:true">状态</th>
                     <th data-options="field:'stateDate',width:150,deltaWidth:0">时间</th>
                     <%--<th data-options="field:'operation',width:150">操作</th>--%>
                 </tr>

@@ -57,6 +57,12 @@ public class HomeController extends BaseController {
         return "ceohome";
     }
 
+    @RequestMapping("/aa")
+    public String aa(){
+        return "aa";
+    }
+
+
 
 
 }

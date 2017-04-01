@@ -32,6 +32,7 @@
     <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
     <meta http-equiv="description" content="对投资金支撑系统">
 
+    <link rel="stylesheet" type="text/css" href="<%=basePath%>/css/custom.css">
     <link rel="stylesheet" type="text/css" href="<%=basePath%>/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="<%=basePath%>/css/bootstrap-theme.min.css">
     <link rel="stylesheet" type="text/css" href="<%=basePath%>/css//easyui.css">

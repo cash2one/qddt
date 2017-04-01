@@ -23,15 +23,15 @@
             <thead>
                 <tr>
                     <th data-options="field:'billingCycle',width:80">考核年月</th>
-                    <th data-options="field:'areaName',width:90">区域</th>
-                    <th data-options="field:'score',width:90,resizable:true,sortable:true">考核得分</th>
-                    <th data-options="field:'lastReward',width:90,resizable:true,sortable:true">上期预发</th>
-                    <th data-options="field:'lastForwardReward',width:120,resizable:true,sortable:true">上期实际应发奖励</th>
-                    <th data-options="field:'lastSettlement',width:90,resizable:true,sortable:true">上期结算</th>
-                    <th data-options="field:'forwardReward',width:90,resizable:true,sortable:true">本期预发</th>
-                    <th data-options="field:'reward',width:90,resizable:true,sortable:true">本期应发</th>
-                    <th data-options="field:'doubleReward',width:120,resizable:true,sortable:true">双倍激励金额</th>
-                    <th data-options="field:'state',width:80">状态</th>
+                    <th data-options="field:'areaName',width:90,sortable:true">区域</th>
+                    <th data-options="field:'score',width:90,resizable:true,sortable:true,sorter:numberSort">考核得分</th>
+                    <th data-options="field:'lastReward',width:90,resizable:true,sortable:true,sorter:numberSort">上期预发</th>
+                    <th data-options="field:'lastForwardReward',width:120,resizable:true,sortable:true,sorter:numberSort">上期实际应发奖励</th>
+                    <th data-options="field:'lastSettlement',width:90,resizable:true,sortable:true,sorter:numberSort">上期结算</th>
+                    <th data-options="field:'forwardReward',width:90,resizable:true,sortable:true,sorter:numberSort">本期预发</th>
+                    <th data-options="field:'reward',width:90,resizable:true,sortable:true,sorter:numberSort">本期应发</th>
+                    <th data-options="field:'doubleReward',width:120,resizable:true,sortable:true,sorter:numberSort">双倍激励金额</th>
+                    <th data-options="field:'state',width:80,sortable:true">状态</th>
                     <th data-options="field:'stateDate',width:180">时间</th>
                     <%--<th data-options="field:'operation',width:150">操作</th>--%>
                 </tr>

@@ -27,9 +27,13 @@
                     <th data-options="field:'districtName',width:100">分局</th>
                     <th data-options="field:'zoneName',width:100">片区</th>
                     <th data-options="field:'doubleReward',width:100">总金额</th>
+                    <th field="test" formatter='formatterAssessmentState' width="250">流程</th>
+                    <th data-options="field:'operation',width:200">操作</th>
                     <th data-options="field:'state',width:100">状态</th>
                     <th data-options="field:'stateDate',width:150">时间</th>
-                    <th data-options="field:'operation',width:200">操作</th>
+
+
+
                 </tr>
             </thead>
             <tbody>
@@ -40,14 +44,7 @@
                         <td>${assessment.districtName}</td>
                         <td>${assessment.zoneName}</td>
                         <td>${assessment.doubleReward}</td>
-                        <td><c:if test="${assessment.state=='INI'}">初始化</c:if>
-                            <c:if test="${assessment.state=='OPN'}">已上报</c:if>
-                            <c:if test="${assessment.state=='REP'}">已通知</c:if>
-                            <c:if test="${assessment.state=='FED'}">已反馈</c:if>
-                            <c:if test="${assessment.state=='AUD'}">已审核</c:if>
-                            <c:if test="${assessment.state=='CLS'}">已关闭(人工)</c:if>
-                            <c:if test="${assessment.state=='END'}">已结束</c:if></td>
-                        <td>${assessment.createDate}</td>
+                        <td>${assessment.state}</td>
                         <td>
                             <c:if test="${assessment.state=='REP'}">
                                 <a class="btn btn-info btn-xs" title="分配考核表" onclick="doFeedback(${assessment.assessmentId})" >分配考核表</a>
@@ -70,6 +67,15 @@
                             </c:if>
                                 <%--<a class="btn btn-info btn-xs" title="上传签收表" onclick="doViewSignature(${assessment.assessmentId})" >查看签收</a>--%>
                         </td>
+                        <td><c:if test="${assessment.state=='INI'}">初始化</c:if>
+                            <c:if test="${assessment.state=='OPN'}">已上报</c:if>
+                            <c:if test="${assessment.state=='REP'}">已通知</c:if>
+                            <c:if test="${assessment.state=='FED'}">已反馈</c:if>
+                            <c:if test="${assessment.state=='AUD'}">已审核</c:if>
+                            <c:if test="${assessment.state=='CLS'}">已关闭(人工)</c:if>
+                            <c:if test="${assessment.state=='END'}">已结束</c:if></td>
+                        <td><fmt:formatDate value="${assessment.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+
                     </tr>
                 </c:forEach>
             </tbody>
@@ -192,6 +198,10 @@
     function doDialogCancel() {
 
 
+    }
+    function formatterAssessmentState(val,row,index){
+        //alert(val+row.state);
+        return formatterBar(val);
     }
 </script>
 <%@ include file="footer.jsp"%>
