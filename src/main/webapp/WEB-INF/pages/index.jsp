@@ -86,6 +86,7 @@
                     <li class="home"><a href="javascript:void(0)" name="/assessment/admindistrictassessments.html" title="分局视图"  class="iframeurl"><i class="icon-double-angle-right"></i>面向分局视图</a></li>
                     <li class="home"><a href="javascript:void(0)" name="/assessment/adminassessmentlist.html" title="片区视图"  class="iframeurl"><i class="icon-double-angle-right"></i>片区化视图</a></li>
                     <li class="home"><a href="javascript:void(0)" name="/assessment/adminstaffassessment.html?cycle=0" title="绩效视图"  class="iframeurl"><i class="icon-double-angle-right"></i>绩效视图</a></li>
+                    <li class="home"><a href="javascript:void(0)" name="/assessment/adminstaffassessmentpage.html?cycle=201703" title="绩效视图"  class="iframeurl"><i class="icon-double-angle-right"></i>绩效视图</a></li>
                    </ul>
 				  </li>
 

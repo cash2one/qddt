@@ -184,9 +184,19 @@
                     }, '-',*/
                     { text: '保存', iconCls: 'icon-save', handler: function () {
                         //保存时结束当前编辑的行，自动触发onAfterEdit事件如果要与后台交互可将数据通过Ajax提交后台
-                        datagrid.datagrid("endEdit", editRow);
+                        if (editRow != undefined) {
+                            datagrid.datagrid("endEdit", editRow);
+                        }
+                        if (editRow != undefined){
+                            $.messager.alert("信息","请首先完成当前记录",'info');
+                            return;
+                        }
                         var rows = datagrid.datagrid('getData');//datagrid.datagrid("getSelections");
                         var    arr=$('#dg').datagrid('getChanges');
+                        if (arr.length == 0){
+                            $.messager.alert("信息","无考核记录上报!",'info');
+                            return;
+                        }
                         console.info("getchanges array",arr);
                         $.each(arr,function (i,n) {
                             //console.log("getchanges",n);j

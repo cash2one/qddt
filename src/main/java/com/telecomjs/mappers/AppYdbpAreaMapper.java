@@ -29,4 +29,9 @@ public interface AppYdbpAreaMapper {
     List<Map> findL2ByArea(@Param("areaId") long areaId);
 
     List<AppYdbpArea> findAllAreas();
+
+    List<AppYdbpArea> findAll4t();
+    int insert4t(AppYdbpArea record);
+
+    int clearAll();
 }

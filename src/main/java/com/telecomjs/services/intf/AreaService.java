@@ -13,5 +13,5 @@ public interface AreaService {
     public boolean checkCssNumber(String cssNumber);
     List<AppYdbpArea> findAll();
     List<AppYdbpArea> findAllAreas();
-
+    public int reloadArea();
 }

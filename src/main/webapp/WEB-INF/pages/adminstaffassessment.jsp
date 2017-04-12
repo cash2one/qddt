@@ -48,7 +48,7 @@
                     <th data-options="field:'forwardReward',width:100,sortable:true,sorter:numberSort">本期预发</th>
                     <th data-options="field:'reward',width:100,sortable:true,sorter:numberSort">本期应发</th>
                     <th data-options="field:'doubleReward',width:100,sortable:true,sorter:numberSort">双倍激励金额</th>
-                    <th data-options="field:'state',width:100">状态</th>
+                    <th data-options="field:'state',width:100,sortable:true">状态</th>
                     <th data-options="field:'stateDate',width:150,sortable:true">时间</th>
                     <th data-options="field:'cssStaffId',width:150,sortable:true">CSS工号</th>
                     <th data-options="field:'roleName',width:150,sortable:true">岗位类别</th>
@@ -56,7 +56,7 @@
                     <th data-options="field:'personalReward',width:150,sortable:true,sorter:numberSort">个人绩效</th>
 
                     <!-- 分配详情 -->
-                    <th data-options="field:'operation',width:150">操作</th>
+                    <%--<th data-options="field:'operation',width:150">操作</th>--%>
                 </tr>
             </thead>
             <tbody>
@@ -92,12 +92,12 @@
                             <td>${staffs.staffName}</td>
                             <td>${staffs.personalAmount}</td>
                             <!--  分配详情结束 -->
-                            <td>
-                                <a class="btn btn-info btn-xs" title="查看分配详情" onclick="doViewDetail(${assessment.assessmentId})" >分配详情</a>
-                                <a class="btn btn-info btn-xs" title="审核日志" onclick="doViewAudit(${assessment.assessmentId})" >审核日志</a>
-                                <a class="btn btn-info btn-xs" title="签收表" onclick="doViewSignature(${assessment.assessmentId})" >签收</a>
-                                    <%--<a class="btn btn-info btn-xs" title="上传签收表" onclick="doViewSignature(${assessment.assessmentId})" >查看签收</a>--%>
-                            </td>
+                            <%--<td>--%>
+                                <%--<a class="btn btn-info btn-xs" title="查看分配详情" onclick="doViewDetail(${assessment.assessmentId})" >分配详情</a>--%>
+                                <%--<a class="btn btn-info btn-xs" title="审核日志" onclick="doViewAudit(${assessment.assessmentId})" >审核日志</a>--%>
+                                <%--<a class="btn btn-info btn-xs" title="签收表" onclick="doViewSignature(${assessment.assessmentId})" >签收</a>--%>
+                                    <%--&lt;%&ndash;<a class="btn btn-info btn-xs" title="上传签收表" onclick="doViewSignature(${assessment.assessmentId})" >查看签收</a>&ndash;%&gt;--%>
+                            <%--</td>--%>
                         </tr>
                         </c:forEach>
                     </c:if>
@@ -131,12 +131,12 @@
                             <td></td>
                             <td></td>
                             <!--  分配详情结束 -->
-                            <td>
-                                <a class="btn btn-info btn-xs" title="查看分配详情" onclick="doViewDetail(${assessment.assessmentId})" >分配详情</a>
-                                <a class="btn btn-info btn-xs" title="审核日志" onclick="doViewAudit(${assessment.assessmentId})" >审核日志</a>
-                                <a class="btn btn-info btn-xs" title="签收表" onclick="doViewSignature(${assessment.assessmentId})" >签收</a>
-                                    <%--<a class="btn btn-info btn-xs" title="上传签收表" onclick="doViewSignature(${assessment.assessmentId})" >查看签收</a>--%>
-                            </td>
+                            <%--<td>--%>
+                                <%--<a class="btn btn-info btn-xs" title="查看分配详情" onclick="doViewDetail(${assessment.assessmentId})" >分配详情</a>--%>
+                                <%--<a class="btn btn-info btn-xs" title="审核日志" onclick="doViewAudit(${assessment.assessmentId})" >审核日志</a>--%>
+                                <%--<a class="btn btn-info btn-xs" title="签收表" onclick="doViewSignature(${assessment.assessmentId})" >签收</a>--%>
+                                    <%--&lt;%&ndash;<a class="btn btn-info btn-xs" title="上传签收表" onclick="doViewSignature(${assessment.assessmentId})" >查看签收</a>&ndash;%&gt;--%>
+                            <%--</td>--%>
                         </tr>
                     </c:if>
                 </c:forEach>

@@ -90,20 +90,34 @@ public interface AssessmentService {
 
     int existsStaffAssessment(Long cssStaffId, Integer assessmentId);
 
-    List<AssessmentWithDetail> findAssessmentByCycle(int cycle);
+
 
     List<Assessment> findDCEOToDoAssessments(long districtId);
 
     List<Assessment> findAssessmentByDistrict(long districtId, int billingCycle);
 
+    //结束考核表(一个)
     int endAssessment(int assessmentId);
 
+    //管理员查询指定账期下的员工绩效表
+    List<AssessmentWithDetail> findAssessmentByCycle(int cycle);
+
+    //管理员分页查询指定账期下的员工绩效
+    List<AssessmentWithDetail> findAssessmentWithPageByCycle(int cycle,int startRow,int pageSize);
+    //管理员分页查询指定账期下的员工绩效
+    int findAssessmentCountByCycle(int cycle,int startRow,int pageSize);
+
+
+
+    //管理员查询指定账期下的分局员工绩效表
     List<AssessmentWithDetail> findStaffAssessmentForDistrictAndCycle(long districtId, int cycle);
 
+    //管理员查询制定账期下的区域员工绩效表
     List<AssessmentWithDetail> findStaffAssessmentForAreaAndCycle(long areaId, int cycle);
 
     //区局查询考核项
     List<Assessment> findAssessmentByArea(long areaId, int billingCycle);
 
+    //检查是否已上传签名
     int existsAssessmentSignature(int assessmentId);
 }

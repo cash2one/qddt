@@ -66,6 +66,19 @@
         <property name="dataSource" ref="dataSource" />
         <!-- 加载mybatis的全局配置文件 -->
         <!--<property name="configLocation" value="classpath*:com/telecomjs/mapper/*.xml" />-->
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <property name="properties">
+                        <!--使用下面的方式配置参数，一行配置一个 -->
+                        <value>
+                            pageSizeZero=true
+                            reasonable=true
+                        </value>
+                    </property>
+                </bean>
+            </array>
+        </property>
     </bean>
 
     <!-- mapper扫描器 -->
@@ -85,6 +98,29 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+    <bean id="dataSource2" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="jdbcUrl" value="${jdbc.url2}" />
+        <property name="driverClass" value="${jdbc.driver2}" />
+        <property name="user" value="${jdbc.username2}" />
+        <property name="password" value="${jdbc.password2}" />
+        <!--连接池中保留的最大连接数。Default: 15 -->
+        <property name="maxPoolSize" value="10" />
+        <!--连接池中保留的最小连接数。-->
+        <property name="minPoolSize" value="1" />
+        <!--初始化时获取的连接数，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+        <property name="initialPoolSize" value="1" />
+        <!--最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+        <property name="maxIdleTime" value="${jdbc.maxIdleTime}" />
+
+    </bean>
+
+    <!-- sqlSessionFactory -->
+    <bean id="sqlSessionFactory2" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 数据库连接池 -->
+        <property name="dataSource" ref="dataSource2" />
+        <!-- 加载mybatis的全局配置文件 -->
+        <!--<property name="configLocation" value="classpath*:com/telecomjs/mapper/*.xml" />-->
+    </bean>
     <!--<tx:annotation-driven transaction-manager="transactionManager"/>-->
 
     <!-- 🍜事物切面配置 -->
@@ -96,6 +132,7 @@
             <tx:method name="feedback*" propagation="REQUIRED"/>
             <tx:method name="subscribe*" propagation="REQUIRED"/>
             <tx:method name="audit*" propagation="REQUIRED"/>
+            <tx:method name="reload*" propagation="REQUIRED"/>
             <tx:method name="save*" propagation="REQUIRED"/>
             <tx:method name="delete*" propagation="REQUIRED"/>
             <tx:method name="insert*" propagation="REQUIRED"/>

@@ -7,6 +7,15 @@ import java.io.Serializable;
  */
 public class DataSet implements Serializable {
     public int total;
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
     public Object[] rows;
 
     public DataSet(Object[] objects){

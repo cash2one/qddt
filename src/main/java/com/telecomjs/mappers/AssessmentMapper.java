@@ -93,6 +93,7 @@ public interface AssessmentMapper {
     List<Assessment> findZoneAssessments();
     //管理员视图，按账期查询全量的到员工层级的数据清单
     List<AssessmentWithDetail> findStaffAssessment(@Param("billingCycle") int billingCycle);
+    int findStaffAssessmentCount(@Param("billingCycle") int billingCycle);
 
     //CEO和区域视图
     List<AssessmentWithDetail> findStaffAssessmentByDistrict(@Param("billingCycle") int billingCycle, @Param("districtId") long zoneId);

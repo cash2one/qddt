@@ -10,7 +10,7 @@ import org.junit.runner.notification.Failure;
 public class TestRunner {
     public  static void main(String[] args){
         //Result result = JUnitCore.runClasses(TestMessageUtil.class);
-        Result result  = JUnitCore.runClasses(TestOperationRoles.class);
+        Result result  = JUnitCore.runClasses(TestNjdmDatabaseReader.class);
         for (Failure failure : result.getFailures()){
             System.out.println(failure.toString());
         }

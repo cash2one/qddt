@@ -469,8 +469,14 @@
     and state  not in ('CLS')
     Order by assessment_id
   </select>
+    <select id="findStaffAssessmentCount" resultType="java.lang.Integer"  >
+      select count(1)
+      from ASSESSMENT a
+      LEFT JOIN staff_assessment D on a.assessment_id=d.assessment_id and d.STATE not in ('REP','CLS')
+      where  a.BILLING_CYCLE = #{billingCycle}
+    </select>
 
-  <update id="updateTempOpenByEvent">
+    <update id="updateTempOpenByEvent">
         UPDATE assessment_temp SET state='OPN'
         WHERE assessment_event_id = #{eventId}
     </update>

@@ -752,6 +752,36 @@ public class AssessmentController extends BaseController {
         return mv;
     }
 
+    @RequestMapping("adminstaffassessmentpage")
+    public ModelAndView adminStaffAssessmentPage(@RequestParam(value = "cycle",required = false) int cycle) {
+        Subject subject = SecurityUtils.getSubject();
+        if (!subject.hasRole(RoleType.ADMIN.name()) && !subject.hasRole(RoleType.QDADMIN.name()))
+            throw new UnsupportedOperationException("非管理员权限！");
+        ModelAndView mv = new ModelAndView("adminstaffassessmentpage");
+        List<BillingCycle> cycles = assessmentService.findAllCycles();
+        mv.getModel().put("cycles",cycles);
+        mv.getModel().put("total","0");
+        return mv;
+    }
+
+    @RequestMapping("findstaffassessmentbypage")
+    @ResponseBody
+    public void findStaffAssessmentByPage(@RequestParam(value = "cycle",required = false) int cycle
+            ,@RequestParam("pageNum") int pageNum
+            ,@RequestParam("pageSize") int pageSize
+            ,HttpServletResponse response) throws IOException {
+        Subject subject = SecurityUtils.getSubject();
+        if (!subject.hasRole(RoleType.ADMIN.name()) && !subject.hasRole(RoleType.QDADMIN.name()))
+            throw new UnsupportedOperationException("非管理员权限！");
+        response.reset();
+        response.setHeader("Cache-Control", "no-cache");
+        response.setContentType("text/html;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+        List list =  assessmentService.findAssessmentWithPageByCycle(cycle,pageNum,pageSize);
+        out.write(JSON.toJSONString(list));
+    }
+
     /**
      * CEO 和 渠道管理员视图
      */

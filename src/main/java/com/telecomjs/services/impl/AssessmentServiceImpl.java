@@ -1,5 +1,6 @@
 package com.telecomjs.services.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.telecomjs.beans.*;
 import com.telecomjs.datagrid.AssessmentStateHelper;
 import com.telecomjs.datagrid.AuditNodeHelper;
@@ -329,9 +330,39 @@ public class AssessmentServiceImpl implements AssessmentService{
         return assessmentMapper.existsStaffAssessment(cssStaffId,assessmentId);
     }
 
+    /**
+     * 管理员根据账期查询员工绩效表,多表关联
+     * @param cycle
+     * @return
+     */
     @Override
     public List<AssessmentWithDetail> findAssessmentByCycle(int cycle) {
         return assessmentMapper.findStaffAssessment(cycle);
+    }
+
+    /**
+     * 管理员分页查询员工绩效表
+     * @param cycle
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public List<AssessmentWithDetail> findAssessmentWithPageByCycle(int cycle, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
+        return assessmentMapper.findStaffAssessment(cycle);
+    }
+
+    /**
+     * 管理员分页查询 查询总记录数
+     * @param cycle
+     * @param startRow
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public int findAssessmentCountByCycle(int cycle, int startRow, int pageSize) {
+        return assessmentMapper.findStaffAssessmentCount(cycle);
     }
 
 
