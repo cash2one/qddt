@@ -13,7 +13,12 @@ public class AssessmentStateHelper {
         OPN,
         REP,
         FED,
-        AUD,
+        AUD,//分局长审核
+        AAU,//区域审核
+        QAU,//渠道审阅
+        SGN,//签名
+        DRV,//分局长审阅
+        ARV,//区域审阅
         END,
         CLS
     }
@@ -29,6 +34,30 @@ public class AssessmentStateHelper {
 
         public String getState(){
             return this.state;
+        }
+    }
+
+    public static enum AssessmentOperation{
+        OPENING("生成考核项"),
+        REPORTING("通知CEO上报"),
+        FEEDBACKING("片区CEO上报"),
+        AUDITING1("分局长完成所辖片区考核表一次审阅"),
+        AUDITING2("区域管理层完成所辖片区考核表一次审阅"),
+        AUDITING3("渠道管理员完成所有片区一次审阅，开始提报数据给第三方平台"),
+        SIGNATURING("片区CEO完成签名上传"),
+        REVIEWING1("分局CEO完成所辖片区二次审阅"),
+        REVIEWING2("区域管理层完成所辖片区二次审阅"),
+        ENDING("渠道管理员完成考核流程");
+
+        private String operationName;
+
+
+        AssessmentOperation(String name) {
+            this.operationName = name;
+        }
+
+        public String getOperationName() {
+            return operationName;
         }
     }
 

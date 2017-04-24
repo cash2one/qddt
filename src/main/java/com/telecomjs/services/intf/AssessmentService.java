@@ -66,7 +66,7 @@ public interface AssessmentService {
 
     boolean districtHasAssessment(Long districtId, int assessmentId);
 
-    int auditAssessment(int assessmentId, AuditNodeHelper.SuggestionType suggestion, AuditLog auditLog);
+
 
     int getSequenceOfAuditLog();
 
@@ -120,4 +120,28 @@ public interface AssessmentService {
 
     //检查是否已上传签名
     int existsAssessmentSignature(int assessmentId);
+
+
+    //区域审核第一次片区的分配表 同意 全部区域
+    int auditAssessmentByArea(int billingCycle, int areaId,AuditLog auditLog);
+    //区域审核第一次片区的分配表 不同意 某个分局
+    int unauditAssessmentByDistrict(int billingCycle, int districtId,AuditLog auditLog);
+
+    //渠道审核第一次片区的分配表（全区范围内的）
+    int auditAllAssessment(int billingCycle,AuditLog auditLog );
+
+    //区域审核第二次片区的签收表 同意 区域范围
+    int commitAssessmentByArea(int billingCycle, int areaId,AuditLog auditLog);
+
+    //渠道审核第二次片区的签收表（全区范围内的）
+    int commitAllAssessment(int billingCycle,AuditLog auditLog );
+
+    //分局长审核片区的考核表（第一次）
+    int auditAssessment(int assessmentId, AuditNodeHelper.SuggestionType suggestion, AuditLog auditLog);
+
+    //分局长二次审阅片区的签收表 同意 片区范围
+    int commitAssessment(int assessmentId,  AuditLog auditLog);
+    //分局长二次审阅片区的签收表 不同意 片区范围
+    int uncommitAssessment(int assessmentId,   AuditLog auditLog);
+
 }

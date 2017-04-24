@@ -320,7 +320,7 @@ public class PoiExcelReader implements Iterable<String[]> {
         return new Iterator<String[]>() {
             @Override
             public boolean hasNext() {
-                return currentRowNumber < rowNumber;
+                return currentRowNumber <= rowNumber;
             }
 
             @Override

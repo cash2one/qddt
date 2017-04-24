@@ -184,4 +184,9 @@
       SET state = 'REP'
       WHERE ASSESSMENT_ID=#{assessmentId}
   </update>
+  <update id="changeState">
+    UPDATE ASSESSMENT_SUBSCRIBER
+    SET state=#{toState}
+    Where ASSESSMENT_ID = #{assessmentId} and state=#{fromState}
+  </update>
 </mapper>

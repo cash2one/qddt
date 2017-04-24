@@ -2,14 +2,18 @@ package com.telecomjs.services.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.telecomjs.beans.*;
+import com.telecomjs.datagrid.AssessmentHelper;
 import com.telecomjs.datagrid.AssessmentStateHelper;
 import com.telecomjs.datagrid.AuditNodeHelper;
 import com.telecomjs.mappers.*;
 import com.telecomjs.services.intf.AssessmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.telecomjs.datagrid.AssessmentStateHelper.AssessmentNode;
+import com.telecomjs.datagrid.AssessmentStateHelper.AssessmentOperation;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +35,8 @@ public class AssessmentServiceImpl implements AssessmentService{
     AssessmentSignatureMapper assessmentSignatureMapper;
     @Autowired
     AuditLogMapper auditLogMapper;
+    @Autowired
+    AssessmentLogMapper assessmentLogMapper;
 
     public int getSequenceOfEvent(){
         return assessmentEventMapper.getPrimaryKey();
@@ -242,38 +248,7 @@ public class AssessmentServiceImpl implements AssessmentService{
     }
 
 
-    @Override
-    public int auditAssessment(int assessmentId, AuditNodeHelper.SuggestionType suggestion,AuditLog auditLog) {
-        if (suggestion == AuditNodeHelper.SuggestionType.Agree) {
-            if (assessmentMapper.auditAssessmentWithAgree(assessmentId) > 0) {
-                //刷新subscriber表
-                assessmentSubscriberMapper.auditAssessmentWithAgree(assessmentId);
-                //
-                //将绩效细表状态刷新为已审批
-                staffAssessmentMapper.auditAssessmentWithState(assessmentId, AssessmentStateHelper.AssessmentNode.AUD.name());
 
-                //记录日志
-                auditLogMapper.insert(auditLog);
-                return assessmentId;
-            }
-        }
-        else if (suggestion == AuditNodeHelper.SuggestionType.Disagree){
-            if (assessmentMapper.auditAssessmentWithDisagree(assessmentId) > 0) {
-                //刷新subscriber表
-                assessmentSubscriberMapper.auditAssessmentWithDisagree(assessmentId);
-                //将员工绩效表状态刷为失效
-                staffAssessmentMapper.auditAssessmentWithState(assessmentId, AssessmentStateHelper.AssessmentNode.CLS.name());
-                //签收表状态刷为失效
-                assessmentSignatureMapper.updateSignatureWithState(assessmentId, AssessmentStateHelper.AssessmentNode.CLS.name());
-
-                //记录日志
-                auditLogMapper.insert(auditLog);
-                return  assessmentId;
-
-            }
-        }
-        return 0;
-    }
 
     @Override
     public int getSequenceOfAuditLog() {
@@ -441,6 +416,227 @@ public class AssessmentServiceImpl implements AssessmentService{
     @Override
     public int existsAssessmentSignature(int assessmentId) {
         return assessmentSignatureMapper.existsSignature(assessmentId);
+    }
+
+    /**
+     * 分局长对单个片区审核审阅
+     * @param assessments
+     * @param fromState
+     * @param toState
+     * @param operation
+     * @param auditLog
+     * @return
+     */
+    private int auditAllWithOperation(List<Assessment> assessments,
+                                              String fromState,String toState,
+                                              String operation,AuditLog auditLog){
+        if (assessments == null)
+            return 0;
+        int count = 0;
+        for (Assessment assessment : assessments){
+            if (assessment.getState().equals(fromState)) {
+                count++;
+                auditWithOperation(assessment.getAssessmentId(), fromState, toState, operation, auditLog);
+            }
+        }
+        return count;
+    }
+
+
+    /**
+     * 内部方法，对单个片区原子操作
+     * @param assessmentId
+     * @param fromState
+     * @param toState
+     * @param operation
+     * @param log
+     * @return
+     */
+    private int auditWithOperation(int assessmentId,
+                                   String fromState,String toState,
+                                   String operation,AuditLog log){
+        Assessment assessment = assessmentMapper.selectByPrimaryKey(assessmentId);
+        if (assessment.getState().equals(fromState)) {
+            //update assessment
+            assessmentMapper.updateByIdAndState(assessment.getAssessmentId(), toState);
+            //Insert AuditLog
+            log.setState(assessment.getState());
+            log.setAssessmentId(assessment.getAssessmentId());
+            log.setAuditId(auditLogMapper.getPrimatyKey());
+            log.setStateDate(new Date());
+            auditLogMapper.insert(log);
+            //Insert assessment_log
+            AssessmentLog assessmentLog = AssessmentHelper.makeAssessmentLog(
+                    assessmentLogMapper.getPrimaryKey(),
+                    assessment.getAssessmentId(),
+                    operation,
+                    log.getNodeStaff(),
+                    log.getStaffName(),
+                    fromState,
+                    toState,
+                    new Date());
+            assessmentLogMapper.insert(assessmentLog);
+            //第一次审阅 退回状态 要失效掉以前的上报表
+
+            //第二次审阅 上传的签收表无效
+
+            //提报给第三方平台后，固话员工上报表
+
+            //全部完成后，签收表固化
+
+            return assessmentId;
+        }
+        return 0;
+    }
+
+
+    /**
+     * 区域领导对本区的所有片区进行审阅
+     * @param billingCycle
+     * @param areaId
+     * @param auditLog
+     * @return
+     */
+    @Override
+    public int auditAssessmentByArea(int billingCycle, int areaId, AuditLog auditLog) {
+        List<Assessment> assessments = assessmentMapper.findAssessmentForAreaAndCycle(areaId,billingCycle);
+        return auditAllWithOperation(assessments,
+                AssessmentNode.AUD.name(),AssessmentNode.AAU.name(),
+                AssessmentOperation.AUDITING2.getOperationName(),auditLog);
+    }
+
+    @Override
+    public int unauditAssessmentByDistrict(int billingCycle, int districtId, AuditLog auditLog) {
+        List<Assessment> assessments = assessmentMapper.findAssessmentForDistrictAndCycle(districtId,billingCycle);
+        return auditAllWithOperation(assessments,
+                AssessmentNode.AUD.name(),AssessmentNode.FED.name(),
+                AssessmentOperation.AUDITING2.getOperationName(),auditLog);
+    }
+
+    /**
+     * 渠道完成相应账期的所有片区审核
+     * @param billingCycle
+     * @param auditLog
+     * @return
+     */
+    @Override
+    public int auditAllAssessment(int billingCycle, AuditLog auditLog) {
+        List<Assessment> assessments = assessmentMapper.findAssessmentForCycle(billingCycle);
+        return auditAllWithOperation(assessments,
+                AssessmentNode.AAU.name(),AssessmentNode.QAU.name(),
+                AssessmentOperation.AUDITING3.getOperationName(),auditLog);
+    }
+
+
+    /**
+     * 区域完成第二次审阅
+     * @param billingCycle
+     * @param areaId
+     * @param auditLog
+     * @return
+     */
+    @Override
+    public int commitAssessmentByArea(int billingCycle, int areaId, AuditLog auditLog) {
+        List<Assessment> assessments = assessmentMapper.findAssessmentForAreaAndCycle(areaId,billingCycle);
+        return auditAllWithOperation(assessments,
+                AssessmentNode.DRV.name(),AssessmentNode.ARV.name(),
+                AssessmentOperation.REVIEWING2.getOperationName(),auditLog);
+    }
+
+    /**
+     * 渠道完成相应账期的所有片区审核(第二次)
+     * @param billingCycle
+     * @param auditLog
+     * @return
+     */
+    @Override
+    public int commitAllAssessment(int billingCycle, AuditLog auditLog) {
+        List<Assessment> assessments = assessmentMapper.findAssessmentForCycle(billingCycle);
+        return auditAllWithOperation(assessments,
+                AssessmentNode.ARV.name(),AssessmentNode.END.name(),
+                AssessmentOperation.ENDING.getOperationName(),auditLog);
+    }
+
+
+    /**
+     * 分局长审阅片区考核表
+     * @param assessmentId
+     * @param suggestion
+     * @param auditLog
+     * @return
+     */
+    @Override
+    public int auditAssessment(int assessmentId, AuditNodeHelper.SuggestionType suggestion,AuditLog auditLog) {
+        if (suggestion == AuditNodeHelper.SuggestionType.Agree) {
+            if (assessmentMapper.auditAssessmentWithAgree(assessmentId) > 0) {
+                //刷新subscriber表
+                assessmentSubscriberMapper.changeState(assessmentId,AssessmentNode.FED.name(),AssessmentNode.AUD.name());
+
+                //
+                //将绩效细表状态刷新为已审批
+                staffAssessmentMapper.auditAssessmentWithState(assessmentId, AssessmentStateHelper.AssessmentNode.AUD.name());
+
+                //记录日志
+                auditLogMapper.insert(auditLog);
+                return assessmentId;
+            }
+        }
+        else if (suggestion == AuditNodeHelper.SuggestionType.Disagree){
+            if (assessmentMapper.auditAssessmentWithDisagree(assessmentId) > 0) {
+                //刷新subscriber表
+                assessmentSubscriberMapper.changeState(assessmentId,AssessmentNode.FED.name(),AssessmentNode.REP.name());
+                //将员工绩效表状态刷为失效
+                staffAssessmentMapper.auditAssessmentWithState(assessmentId, AssessmentStateHelper.AssessmentNode.CLS.name());
+                //签收表状态刷为失效
+                assessmentSignatureMapper.updateSignatureWithState(assessmentId, AssessmentStateHelper.AssessmentNode.CLS.name());
+
+                //记录日志
+                auditLogMapper.insert(auditLog);
+                return  assessmentId;
+
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * 分局长第二次审阅签收表 同意 片区范围
+     * @param assessmentId
+     * @param auditLog
+     * @return
+     */
+    @Override
+    public int commitAssessment(int assessmentId, AuditLog auditLog) {
+        int ret = auditWithOperation(assessmentId,
+                AssessmentNode.SGN.name(),AssessmentNode.DRV.name(),
+                AssessmentOperation.REVIEWING1.getOperationName(),auditLog);
+        //刷新通知表
+        assessmentSubscriberMapper.changeState(assessmentId,AssessmentNode.SGN.name(),AssessmentNode.DRV.name());
+        //将绩效细表状态刷新为已审批
+        staffAssessmentMapper.auditAssessmentWithState(assessmentId, AssessmentNode.DRV.name());
+        //签收表状态刷为失效
+        assessmentSignatureMapper.updateSignatureWithState(assessmentId, AssessmentNode.DRV.name());
+        return ret;
+    }
+
+    /**
+     * 分局长第二次审阅签收表 不同意 片区范围
+     * @param assessmentId
+     * @param auditLog
+     * @return
+     */
+    @Override
+    public int uncommitAssessment(int assessmentId, AuditLog auditLog) {
+        int ret = auditWithOperation(assessmentId,
+                AssessmentNode.SGN.name(),AssessmentNode.QAU.name(),
+                AssessmentOperation.REVIEWING1.getOperationName(),auditLog);
+        //刷新通知表
+        assessmentSubscriberMapper.changeState(assessmentId,AssessmentNode.SGN.name(),AssessmentNode.QAU.name());
+        //将绩效细表状态刷新为已审批
+        staffAssessmentMapper.auditAssessmentWithState(assessmentId, AssessmentNode.CLS.name());
+        //签收表状态刷为失效
+        assessmentSignatureMapper.updateSignatureWithState(assessmentId, AssessmentNode.CLS.name());
+        return  ret;
     }
 
 

@@ -50,4 +50,6 @@ public interface AssessmentLogMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(AssessmentLog record);
+
+    Integer getPrimaryKey();
 }

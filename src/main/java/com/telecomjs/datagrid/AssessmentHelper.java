@@ -1,10 +1,7 @@
 package com.telecomjs.datagrid;
 
 import com.alibaba.fastjson.JSON;
-import com.telecomjs.beans.Assessment;
-import com.telecomjs.beans.AssessmentEvent;
-import com.telecomjs.beans.AssessmentWithDetail;
-import com.telecomjs.beans.StaffAssessment;
+import com.telecomjs.beans.*;
 import com.telecomjs.utils.PoiExcelReader;
 import org.apache.log4j.spi.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -147,6 +144,22 @@ public class AssessmentHelper {
         map.put("totalDoubleReward",totalDoubleReward);
         map.put("totalReward",totalReward);
         return map;
+    }
+
+    //public static AssessmentLog makeAssessmentLog(int id,int assessmentId,)
+    public static AssessmentLog makeAssessmentLog(Integer logId, Integer assessmentId, String operation,
+                                                  Long cssStaffId, String staffName, String preState,
+                                                  String nextState, Date stateDate) {
+        AssessmentLog log = new AssessmentLog();
+        log.setLogId(logId);
+        log.setAssessmentId(assessmentId);
+        log.setOperation(operation);
+        log.setCssStaffId(cssStaffId);
+        log.setStaffName(staffName);
+        log.setPreState(preState);
+        log.setNextState(nextState);
+        log.setStateDate(new Date());
+        return log;
     }
 
 }

@@ -101,9 +101,11 @@ public interface AssessmentMapper {
     List<Assessment> findAssessmentForDistrictAndState(@Param("districtId") long districtId, @Param("state") String state);
     List<Assessment> findAssessmentForDistrictAndCycle(@Param("districtId") long districtId, @Param("billingCycle") int billingCycle);
     List<Assessment> findAssessmentForAreaAndCycle(@Param("areaId") long areaId, @Param("billingCycle") int billingCycle);
+    List<Assessment> findAssessmentForCycle(@Param("billingCycle") int billingCycle);
 
     int existsZoneAssessment(@Param("zone") long zone, @Param("assessmentId") Integer assessmentId);
 
     int existsStaffAssessment(@Param("cssStaffId") Long cssStaffId, @Param("assessmentId") Integer assessmentId);
 
+    int updateByIdAndState(@Param("assessmentId") Integer assessmentId, @Param("state") String state);
 }

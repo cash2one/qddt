@@ -58,7 +58,9 @@ public interface AssessmentSubscriberMapper {
     int feedbackAssessment(@Param("assessmentId") int assessmentId);
 
 
-    int auditAssessmentWithAgree(@Param("assessmentId") int assessmentId );
+    //int auditAssessmentWithAgree(@Param("assessmentId") int assessmentId );
 
-    int auditAssessmentWithDisagree(@Param("assessmentId") int assessmentId);
+    int changeState(@Param("assessmentId") int assessmentId, @Param("fromState") String fromState, @Param("toState") String toState);
+
+    //int auditAssessmentWithDisagree(@Param("assessmentId") int assessmentId);
 }

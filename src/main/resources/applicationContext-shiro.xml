@@ -61,6 +61,7 @@
                 /ceoindex*        = authc
                 /deoindex*        = authc
                 /areaindex*        = authc
+                /mark               = anon
 
                 <!-- 说明: /*匹配的的是/abc;  /** 匹配的是多个/*, 比如/abc/def -->
             </value>
