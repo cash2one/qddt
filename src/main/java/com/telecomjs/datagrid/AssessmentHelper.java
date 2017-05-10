@@ -118,6 +118,11 @@ public class AssessmentHelper {
         else return false;
     }
 
+    public static  boolean equalsZero(double num1)
+    {
+        return  ((num1>-0.000001)&&(num1<0.000001))  ;
+    }
+
     public static Map makeSummaryWithDetail(List<AssessmentWithDetail> assessments){
         double totalReward=0,averageScore=0,personalReward=0;
         for (AssessmentWithDetail assessment:assessments){

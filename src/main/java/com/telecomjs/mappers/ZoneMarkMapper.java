@@ -1,6 +1,10 @@
 package com.telecomjs.mappers;
 
 import com.telecomjs.beans.ZoneMark;
+import com.telecomjs.beans.ZoneMarkWithItem;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface ZoneMarkMapper {
     /**
@@ -50,4 +54,18 @@ public interface ZoneMarkMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(ZoneMark record);
+
+    ZoneMarkWithItem findMarkWithCode(@Param("zoneId") long zoneId, @Param("billingCycle") int billingCycle, @Param("code") String code);
+
+    List<ZoneMark> findMDCN(@Param("billingCycle") int billingCycle);
+    List<ZoneMark> findSTLTS(@Param("billingCycle") int billingCycle);
+    List<ZoneMark> findZWYX(@Param("billingCycle") int billingCycle);
+    //删除账期内容
+    int deleteByCycle(@Param("billingCycle") int billingCycle);
+
+    Long getPrimaryKey();
+
+    int insertManual(@Param("billingCycle") int billingCycle);
+
+    int insertBatch(@Param("markList") List<ZoneMark> markList);
 }

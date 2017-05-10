@@ -128,7 +128,9 @@
         <tx:attributes>
             <!-- 传播行为 -->
             <tx:method name="init*" propagation="REQUIRED"/>
+            <!--<tx:method name="open*" propagation="REQUIRED"/>-->
             <tx:method name="report*" propagation="REQUIRED"/>
+            <tx:method name="notify*" propagation="REQUIRED"/>
             <tx:method name="feedback*" propagation="REQUIRED"/>
             <tx:method name="subscribe*" propagation="REQUIRED"/>
             <tx:method name="audit*" propagation="REQUIRED"/>

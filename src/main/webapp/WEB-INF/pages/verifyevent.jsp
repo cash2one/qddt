@@ -35,6 +35,7 @@
                 <th data-options="field:'standardMark',width:100">标准化打分</th>
                 <th data-options="field:'areaMark',width:100">区域打分</th>
                 <th data-options="field:'criterion',width:100">评分标准</th>
+                <th data-options="field:'pointGoal',width:100">积分占比目标</th>
                 <th data-options="field:'stateDate',width:150">时间</th>
 
 
@@ -52,6 +53,7 @@
                     <td>${item.standardMark}</td>
                     <td>${item.areaMark}</td>
                     <td>${item.criterion}</td>
+                    <td>${item.pointGoal}</td>
                     <td><fmt:formatDate value="${item.stateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                     </tr>
                 </c:forEach>

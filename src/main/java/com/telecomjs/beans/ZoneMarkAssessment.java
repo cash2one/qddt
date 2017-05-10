@@ -355,4 +355,6 @@ public class ZoneMarkAssessment {
     public void setStateDate(Date stateDate) {
         this.stateDate = stateDate;
     }
+
+
 }

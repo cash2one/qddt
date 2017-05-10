@@ -57,6 +57,7 @@ public interface ZoneMarkEventMapper {
     long getPrimaryKey();
 
     List<ZoneMarkEvent> findEventsByCycle(@Param("billingCycle") int billingCycle);
+    int countEventsByCycle(@Param("billingCycle") int billingCycle, @Param("state") String state);
 
     List<ZoneMarkEvent> findAll();
 

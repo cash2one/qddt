@@ -55,6 +55,7 @@ public interface BillingCycleMapper {
     int updateByPrimaryKey(BillingCycle record);
 
     String getState(@Param("billingCycleId") int billingCycleId);
+    int changeState(@Param("billingCycle") int billingCycle , @Param("state") String state);
 
     List<BillingCycle> findAll();
 

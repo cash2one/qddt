@@ -102,4 +102,9 @@
     set STATE = #{state,jdbcType=VARCHAR}
     where BILLING_CYCLE_ID = #{billingCycleId,jdbcType=DECIMAL}
   </update>
+    <update id="changeState">
+      update BILLING_CYCLE
+      set STATE = #{state,jdbcType=VARCHAR}
+      where BILLING_CYCLE_ID = #{billingCycle,jdbcType=DECIMAL}
+    </update>
 </mapper>

@@ -144,4 +144,6 @@ public interface AssessmentService {
     //分局长二次审阅片区的签收表 不同意 片区范围
     int uncommitAssessment(int assessmentId,   AuditLog auditLog);
 
+    int addBillingCycle(int billingCycle);
+
 }

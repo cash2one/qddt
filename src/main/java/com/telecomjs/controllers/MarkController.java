@@ -138,4 +138,67 @@ public class MarkController extends BaseController {
         out.write("操作失败!");
     }
 
+    //创建完账期，初始化账期基础数据
+    @ResponseBody
+    @RequestMapping("/doopencycle")
+    public void openCycleAndMark(@RequestParam("billingCycle")int billingCycle,HttpServletResponse response) throws IOException {
+        billingCycle = 201704; //for test
+        PrintWriter out = HttpResponseHelper.getUtf8Writer(response);
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.hasRole(UserHelper.RoleType.ADMIN.name())){
+            if (markService.openCycleAndCreateMark(billingCycle)>0){
+                out.write("操作成功!");
+                return;
+            }
+        }
+        out.write("操作失败!");
+    }
+
+    /*//渠道上传完数据，创建新账期的考核数据
+    @ResponseBody
+    @RequestMapping("/doopencycle")
+    public void openBillingCycle(@RequestParam("billingCycle")int billingCycle,HttpServletResponse response) throws IOException {
+        billingCycle = 201704; //for test
+        PrintWriter out = HttpResponseHelper.getUtf8Writer(response);
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.hasRole(UserHelper.RoleType.ADMIN.name())){
+            if (markService.openBillingCycle(billingCycle)>0){
+                out.write("操作成功!");
+                return;
+            }
+        }
+        out.write("操作失败!");
+    }*/
+
+    //渠道审阅完考核数据，提交
+    @ResponseBody
+    @RequestMapping("/docommitcycle")
+    public void commitBillingCycle(@RequestParam("billingCycle")int billingCycle,HttpServletResponse response) throws IOException {
+        billingCycle = 201704; //for test
+        PrintWriter out = HttpResponseHelper.getUtf8Writer(response);
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.hasRole(UserHelper.RoleType.ADMIN.name())){
+            if (markService.commitBillingCycle(billingCycle)>0){
+                out.write("操作成功!");
+                return;
+            }
+        }
+        out.write("操作失败!");
+    }
+
+    //渠道审阅完数据，通知ceo分配考核数据
+    @ResponseBody
+    @RequestMapping("/donotifycycle")
+    public void notifyBillingCycle(@RequestParam("billingCycle")int billingCycle,HttpServletResponse response) throws IOException {
+        billingCycle = 201704; //for test
+        PrintWriter out = HttpResponseHelper.getUtf8Writer(response);
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.hasRole(UserHelper.RoleType.ADMIN.name())){
+            if (markService.notifyBillingCycle(billingCycle)>0){
+                out.write("操作成功!");
+                return;
+            }
+        }
+        out.write("操作失败!");
+    }
 }

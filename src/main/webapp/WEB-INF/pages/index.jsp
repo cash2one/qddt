@@ -72,6 +72,7 @@
 					   <ul class="submenu">
                          <li class="home"><a  href="javascript:void(0)" name="assessment/upload.html"  title="考核上报" class="iframeurl"><i class="icon-double-angle-right"></i>考核上报</a></li>
 						 <li class="home"><a  href="javascript:void(0)" name="assessment/eventlist.html"  title="上报列表" class="iframeurl"><i class="icon-double-angle-right"></i>上报列表</a></li>
+						 <li class="home"><a  href="javascript:void(0)" name="/mark/eventlist.html"  title="上报基表" class="iframeurl"><i class="icon-double-angle-right"></i>上报基表</a></li>
 						 <li class="home"><a  href="javascript:void(0)" name="/assessment/adminassessmentlist.html" title="查看考核清单"  class="iframeurl"><i class="icon-double-angle-right"></i>查看考核清单</a></li>
 						 <%--<li class="home"><a href="javascript:void(0)" name="已到期询价项目.html" title="已到期询价项目"  class="iframeurl"><i class="icon-double-angle-right"></i>分发考核表</a></li>--%>
 						 <%--<li class="home"><a href="javascript:void(0)" name="暂存项目.html" title="暂存项目"  class="iframeurl"><i class="icon-double-angle-right"></i>查看分发记录</a></li>--%>
@@ -103,7 +104,7 @@
 						</li>--%>
 						<li><a href="#" class="dropdown-toggle"><i class="icon-edit"></i><span class="menu-text"> 系统管理 </span><b class="arrow icon-angle-down"></b></a>
 							<ul class="submenu">
-								<li class="home"><a href="javascript:void(0)" name="菜单管理.html" title="菜单管理" class="iframeurl"><i class="icon-double-angle-right"></i>菜单管理</a></li>
+								<li class="home"><a href="javascript:void(0)" name="/assessment/billingcycle.html" title="账期管理" class="iframeurl"><i class="icon-double-angle-right"></i>账期管理</a></li>
 								<li class="home"><a href="javascript:void(0)" name="/role/rolelist.html" title="角色管理"  class="iframeurl"><i class="icon-double-angle-right"></i>角色管理</a></li>
                                 <li class="home"><a href="javascript:void(0)" name="/user/userlist.html" title="用户管理" class="iframeurl"><i class="icon-double-angle-right"></i>用户管理</a></li>
                                 <!--根据用户权限显示用户管理-->

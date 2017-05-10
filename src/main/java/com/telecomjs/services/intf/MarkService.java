@@ -2,6 +2,7 @@ package com.telecomjs.services.intf;
 
 import com.telecomjs.beans.ZoneMarkEvent;
 import com.telecomjs.beans.ZoneMarkUpload;
+import com.telecomjs.beans.ZoneMarkWithItem;
 
 import java.util.List;
 
@@ -27,4 +28,20 @@ public interface MarkService {
     int closeEvent(int eventId);
     //开始计算片区的绩效
     int commitEvent(int eventId);
+
+    /**
+     * 根据zoneID查询相关账期的基础考核数据
+     */
+    ZoneMarkWithItem findMarkWithCode(long zoneId,int billingCycle,String code);
+
+    /**
+     * 创建新的账期，自动创建新账期的item
+     */
+    int openCycleAndCreateMark(int billingCycle);
+
+    //int openBillingCycle(int billingCycle);
+
+    int commitBillingCycle(int billingCycle);
+
+    int notifyBillingCycle(int billingCycle);
 }

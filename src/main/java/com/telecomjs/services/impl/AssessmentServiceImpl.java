@@ -5,6 +5,7 @@ import com.telecomjs.beans.*;
 import com.telecomjs.datagrid.AssessmentHelper;
 import com.telecomjs.datagrid.AssessmentStateHelper;
 import com.telecomjs.datagrid.AuditNodeHelper;
+import com.telecomjs.datagrid.BillingCycleStateEnum;
 import com.telecomjs.mappers.*;
 import com.telecomjs.services.intf.AssessmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -637,6 +638,14 @@ public class AssessmentServiceImpl implements AssessmentService{
         //签收表状态刷为失效
         assessmentSignatureMapper.updateSignatureWithState(assessmentId, AssessmentNode.CLS.name());
         return  ret;
+    }
+
+    @Override
+    public int addBillingCycle(int billingCycle) {
+        BillingCycle cycle = new BillingCycle();
+        cycle.setBillingCycleId(billingCycle);
+        cycle.setState(BillingCycleStateEnum.INITING.name());
+        return billingCycleMapper.insert(cycle);
     }
 
 

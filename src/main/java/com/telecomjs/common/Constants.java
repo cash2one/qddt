@@ -13,6 +13,8 @@ public class Constants {
     public static final String ROLE_ENGINEER = "ENGINEER";
     public static final String PASSWORD_SALT = "CEO";
 
+    public static final String  KEY_COUNT_PER_ASSIST = "zone_mark#countperassist";
+
 
 
 

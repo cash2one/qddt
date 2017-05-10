@@ -1,6 +1,7 @@
 package com.telecomjs.datagrid;
 
 import com.telecomjs.beans.Assessment;
+import com.telecomjs.beans.ZoneMarkAssessment;
 import com.telecomjs.beans.ZoneMarkEvent;
 import com.telecomjs.beans.ZoneMarkUpload;
 import com.telecomjs.utils.PoiExcelReader;
@@ -44,6 +45,7 @@ public class MarkHelper {
                     ,new DataColumn("standardMark","标准化得分")
                     ,new DataColumn("areaMark","区域打分")
                     ,new DataColumn("criterion","对投标准(单位：元）")
+                    ,new DataColumn("pointGoal","积分标准")
             };
 
             List rows = new ArrayList();
@@ -72,6 +74,7 @@ public class MarkHelper {
         one.setStandardMark(arr[4].length()>0?new BigDecimal(arr[4]):new BigDecimal(0));
         one.setAreaMark(arr[5].length()>0?new BigDecimal(arr[5]):new BigDecimal(0));
         one.setCriterion(arr[6].length()>0?new BigDecimal(arr[6]):new BigDecimal(0));
+        one.setPointGoal(arr[7].length()>0?new BigDecimal(arr[7]):new BigDecimal(0));
         return one;
     }
 
@@ -86,11 +89,30 @@ public class MarkHelper {
         return event;
     }
 
-    public static enum MarkItemCode{
+    public static ZoneMarkAssessment createMarkAssessment(long markId, Long zoneId, String channelType,
+                                                          String delegateType, int assessmentId, int billingCycle,
+                                                          double score, double criterion, double reward  ){
+        ZoneMarkAssessment assessment = new ZoneMarkAssessment();
+        assessment.setMarkId(markId);
+        assessment.setZoneId(zoneId);
+        assessment.setChannelType(channelType);
+        assessment.setDelegateType(delegateType);
+        assessment.setAssessmentId(assessmentId);
+        assessment.setBillingCycle((long) billingCycle);
+        assessment.setScore(BigDecimal.valueOf(score));
+        assessment.setCriterion(BigDecimal.valueOf(criterion));
+        assessment.setReward(BigDecimal.valueOf(reward));
+        assessment.setDoubleReward(BigDecimal.valueOf(reward*2));
+        assessment.setStateDate(new Date());
+        return assessment;
+    }
+
+
+    /*public static enum MarkItemCode{
         JFDF,
         STLDF,
         ZWDF,
         JCDF,
         QYDF
-    }
+    }*/
 }

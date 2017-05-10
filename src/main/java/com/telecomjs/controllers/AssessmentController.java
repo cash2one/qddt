@@ -9,6 +9,7 @@ import com.telecomjs.datagrid.AssessmentStateHelper.AssessmentNode;
 import com.telecomjs.services.intf.AreaService;
 import com.telecomjs.services.intf.AssessmentService;
 import com.telecomjs.services.intf.UserService;
+import com.telecomjs.utils.HttpResponseHelper;
 import com.telecomjs.utils.PoiExcelWriter;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -937,7 +938,26 @@ public class AssessmentController extends BaseController {
         return mv;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/doaddcycle",method = RequestMethod.POST )
+    public void doAddCycle(@RequestParam("billingCycle")int billingCycle,HttpServletResponse response) throws IOException {
 
+        PrintWriter out = HttpResponseHelper.getUtf8Writer(response);
+        if (BillingCycleHelper.parseBillingCycle(billingCycle) &&  assessmentService.addBillingCycle(billingCycle)>0){
+            out.write("处理成功!");
+        }
+        else {
+            out.write("处理失败!");
+        }
+    }
+
+    @RequestMapping("/billingcycle")
+    public ModelAndView modifyBillingCycle(){
+        ModelAndView view  = new ModelAndView("adminbillingcycle");
+        List<BillingCycle> cycles = assessmentService.findAllCycles();
+        view.getModel().put("cycles",cycles);
+        return view;
+    }
 
 
 }

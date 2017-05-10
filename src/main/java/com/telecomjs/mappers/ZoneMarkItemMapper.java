@@ -1,6 +1,7 @@
 package com.telecomjs.mappers;
 
 import com.telecomjs.beans.ZoneMarkItem;
+import org.apache.ibatis.annotations.Param;
 
 public interface ZoneMarkItemMapper {
     /**
@@ -50,4 +51,7 @@ public interface ZoneMarkItemMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(ZoneMarkItem record);
+
+    long getIdByCode(@Param("code") String code);
+    ZoneMarkItem getByCode(@Param("code") String code);
 }
