@@ -2,7 +2,6 @@ package com.telecomjs.controllers;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.telecomjs.beans.*;
 import com.telecomjs.datagrid.*;
 import com.telecomjs.datagrid.AssessmentStateHelper.AssessmentNode;
@@ -11,7 +10,6 @@ import com.telecomjs.services.intf.AssessmentService;
 import com.telecomjs.services.intf.UserService;
 import com.telecomjs.utils.HttpResponseHelper;
 import com.telecomjs.utils.PoiExcelWriter;
-import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -597,7 +595,8 @@ public class AssessmentController extends BaseController {
                     assessment.getAreaName(),
                     assessment.getDistrictName(),
                     assessment.getZoneName(),
-                    Long.valueOf(staff.getCssStaffNumber()));
+                    Long.valueOf(staff.getCssStaffNumber()),
+                    staff.getName());
 
             if (assessmentService.auditAssessment(assessmentId,suggestionType,auditLog)>0){
                 out.write("操作成功！");
@@ -959,5 +958,284 @@ public class AssessmentController extends BaseController {
         return view;
     }
 
+    //渠道审阅完数据，通知ceo分配考核数据
+    @ResponseBody
+    @RequestMapping("/donotifycycle")
+    public void notifyBillingCycle(@RequestParam("billingCycle")int billingCycle,HttpServletResponse response) throws IOException {
+        billingCycle = 201704; //for test
+        PrintWriter out = HttpResponseHelper.getUtf8Writer(response);
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.hasRole(UserHelper.RoleType.ADMIN.name())){
+            if (assessmentService.notifyBillingCycle(billingCycle)>0){
+                out.write("操作成功!");
+                return;
+            }
+        }
+        out.write("操作失败!");
+    }
+
+    @RequestMapping("/adminauditview")
+    public ModelAndView areaAuditView(@RequestParam long areaId,@RequestParam int billingCycle){
+        ModelAndView view  = new ModelAndView("areaauditview");
+        List<BillingCycle> cycles = assessmentService.findAllCycles();
+        view.getModel().put("cycles",cycles);
+        return view;
+    }
+
+
+    /**
+     * 区域管理层对分局的上报结果进行审阅
+     * @param assIds
+     * @param suggestion
+     * @param remark
+     * @param response
+     * @throws IOException
+     */
+    @ResponseBody
+    @RequestMapping(value = "/doauditDistricts",method = RequestMethod.POST )
+    public void doAreaAuditByArea(@RequestParam("assessmentIds")String assIds
+            ,@RequestParam("suggestion") String suggestion
+            ,@RequestParam("remark") String remark
+            ,@RequestParam("billingCycle") int billingCycle
+            ,HttpServletResponse response) throws IOException {
+
+        PrintWriter out = HttpResponseHelper.getUtf8Writer(response);
+
+        try {
+            AuditNodeHelper.SuggestionType suggestionType = AuditNodeHelper.SuggestionType.valueOf(suggestion);
+            Subject subject = SecurityUtils.getSubject();
+            Staff staff = userService.findStaff((String) subject.getPrincipal());
+            String areaId = userService.findAreaByStaff(staff.getCssStaffNumber());
+            if (!subject.hasRole(RoleType.QADMIN.name())){
+                out.write("无权限操作相应的分局！");
+                return;
+            }
+
+            List<Long> districtIds = new ArrayList();
+            for (String id : assIds.split(",")){
+                districtIds.add(Long.valueOf(id));
+            }
+            if (assessmentService.areaHasAllDistricts(Long.valueOf(areaId),districtIds)){
+                out.write("无权限操作相应的分局！");
+                return;
+            }
+
+            String suggestionRemark = remark==null?suggestionType.getSuggestion():remark;
+            AuditLog auditLog = AuditNodeHelper.makeAuditLog(0,
+                    0,
+                    suggestionRemark,
+                    suggestionType.getSuggestion(),
+                    null,
+                    null,
+                    null,
+                    Long.valueOf(staff.getCssStaffNumber()),
+                    staff.getName());
+            if (assessmentService.auditDistricts(billingCycle,districtIds,suggestionType,auditLog,AssessmentNode.DRV)>0){
+                out.write("操作成功！");
+                return;
+            }
+
+            out.write("操作失败！");
+            return;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            out.write("操作失败！"+e.getMessage());
+            return;
+        }
+
+    }
+
+    /**
+     * 区域管理层对分局的上报签收表进行审核
+     * @param assIds
+     * @param suggestion
+     * @param remark
+     * @param response
+     * @throws IOException
+     */
+    @ResponseBody
+    @RequestMapping(value = "/doreviewDistricts",method = RequestMethod.POST )
+    public void doAreaReviewByArea(@RequestParam("assessmentIds")String assIds
+            ,@RequestParam("suggestion") String suggestion
+            ,@RequestParam("remark") String remark
+            ,@RequestParam("billingCycle") int billingCycle
+            ,HttpServletResponse response) throws IOException {
+
+        PrintWriter out = HttpResponseHelper.getUtf8Writer(response);
+
+        try {
+            AuditNodeHelper.SuggestionType suggestionType = AuditNodeHelper.SuggestionType.valueOf(suggestion);
+            Subject subject = SecurityUtils.getSubject();
+            Staff staff = userService.findStaff((String) subject.getPrincipal());
+            String areaId = userService.findAreaByStaff(staff.getCssStaffNumber());
+            if (!subject.hasRole(RoleType.QADMIN.name())){
+                out.write("无权限操作相应的分局！");
+                return;
+            }
+
+            List<Long> districtIds = new ArrayList();
+            for (String id : assIds.split(",")){
+                districtIds.add(Long.valueOf(id));
+            }
+            if (assessmentService.areaHasAllDistricts(Long.valueOf(areaId),districtIds)){
+                out.write("无权限操作相应的分局！");
+                return;
+            }
+
+            String suggestionRemark = remark==null?suggestionType.getSuggestion():remark;
+            AuditLog auditLog = AuditNodeHelper.makeAuditLog(0,
+                    0,
+                    suggestionRemark,
+                    suggestionType.getSuggestion(),
+                    null,
+                    null,
+                    null,
+                    Long.valueOf(staff.getCssStaffNumber()),
+                    staff.getName());
+            if (assessmentService.auditDistricts(billingCycle,districtIds,suggestionType,auditLog,AssessmentNode.AUD)>0){
+                out.write("操作成功！");
+                return;
+            }
+
+            out.write("操作失败！");
+            return;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            out.write("操作失败！"+e.getMessage());
+            return;
+        }
+
+    }
+
+    /**
+     * 分局长审阅片区数据
+     * @param assessmentId
+     * @param suggestion
+     * @param remark
+     * @param response
+     * @throws IOException
+     */
+    @ResponseBody
+    @RequestMapping(value = "/doreview",method = RequestMethod.POST )
+    public void doReview(@RequestParam("assessmentid")int assessmentId
+            ,@RequestParam("suggestion") String suggestion
+            ,@RequestParam("remark") String remark
+            ,HttpServletResponse response) throws IOException {
+        PrintWriter out = HttpResponseHelper.getUtf8Writer(response);
+        try {
+            AuditNodeHelper.SuggestionType suggestionType = AuditNodeHelper.SuggestionType.valueOf(suggestion);
+            Subject subject = SecurityUtils.getSubject();
+            Staff staff = userService.findStaff((String) subject.getPrincipal());
+            List<String> districtIds = userService.findDistrictByStaff(staff.getCssStaffNumber());
+            boolean hasOwnedZone = false;
+            for (String districtId : districtIds){
+                hasOwnedZone = assessmentService.districtHasAssessment(Long.valueOf(districtId),assessmentId);
+                if (hasOwnedZone)
+                    break;
+            }
+
+            if (staff == null || !hasOwnedZone){
+                out.write("当前账号无权限操作!");
+                return;
+            }
+
+            Assessment assessment = assessmentService.getAssessment(assessmentId);
+            if (assessment == null){
+                out.write("考核ID不存在，操作失败！");
+                return;
+            }
+            if (!assessment.getState().equals("FED")){
+                out.write("考核ID状态异常，操作失败！");
+                return;
+            }
+
+            if (assessmentService.reAuditAssessment(assessmentId,suggestionType,remark,AssessmentNode.SGN,staff)>0){
+                out.write("操作成功！");
+                return;
+            }
+            out.write("操作失败！");
+            return;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            out.write("操作失败！");
+            return;
+        }
+
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/doreviewall",method = RequestMethod.POST )
+    public void doReviewAll(
+            @RequestParam("suggestion") String suggestion
+            ,@RequestParam("remark") String remark
+            ,@RequestParam("billingCycle") int billingCycle
+            ,HttpServletResponse response) throws IOException {
+
+        PrintWriter out = HttpResponseHelper.getUtf8Writer(response);
+
+        try {
+            AuditNodeHelper.SuggestionType suggestionType = AuditNodeHelper.SuggestionType.valueOf(suggestion);
+            Subject subject = SecurityUtils.getSubject();
+            Staff staff = userService.findStaff((String) subject.getPrincipal());
+            String areaId = userService.findAreaByStaff(staff.getCssStaffNumber());
+            if (!subject.hasRole(RoleType.ADMIN.name())){
+                out.write("无权限操作！");
+                return;
+            }
+
+            if (assessmentService.auditAll(billingCycle,suggestionType,remark,AssessmentNode.ARV,staff)>0){
+                out.write("操作成功！");
+                return;
+            }
+
+            out.write("操作失败！");
+            return;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            out.write("操作失败！"+e.getMessage());
+            return;
+        }
+
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/doauditall",method = RequestMethod.POST )
+    public void doAuditAll(
+            @RequestParam("suggestion") String suggestion
+            ,@RequestParam("remark") String remark
+            ,@RequestParam("billingCycle") int billingCycle
+            ,HttpServletResponse response) throws IOException {
+
+        PrintWriter out = HttpResponseHelper.getUtf8Writer(response);
+
+        try {
+            AuditNodeHelper.SuggestionType suggestionType = AuditNodeHelper.SuggestionType.valueOf(suggestion);
+            Subject subject = SecurityUtils.getSubject();
+            Staff staff = userService.findStaff((String) subject.getPrincipal());
+            String areaId = userService.findAreaByStaff(staff.getCssStaffNumber());
+            if (!subject.hasRole(RoleType.ADMIN.name())){
+                out.write("无权限操作！");
+                return;
+            }
+
+            if (assessmentService.auditAll(billingCycle,suggestionType,remark,AssessmentNode.AAU,staff)>0){
+                out.write("操作成功！");
+                return;
+            }
+
+            out.write("操作失败！");
+            return;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            out.write("操作失败！"+e.getMessage());
+            return;
+        }
+
+    }
 
 }

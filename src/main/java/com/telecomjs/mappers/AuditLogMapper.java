@@ -58,4 +58,8 @@ public interface AuditLogMapper {
     List<AuditLog> findAuditLogById(@Param("assessmentId") int assessmentId);
 
     List<AuditLog> findAuditLogByCssNumber(@Param("cssStaffNumber") Long cssStaffNumber);
+
+    int insertByDistricts(@Param("billingCycle") int billingCycle, @Param("districtIds") List<Long> districtIds, @Param("auditLog") AuditLog auditLog);
+
+    int insertAllByCycle(@Param("billingCycle") int billingCycle, @Param("auditLog") AuditLog auditLog);
 }

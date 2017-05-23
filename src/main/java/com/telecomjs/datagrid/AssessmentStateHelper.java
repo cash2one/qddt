@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 
 import java.util.EnumMap;
 
+
 /**
  * Created by zark on 17/3/16.
  */
@@ -11,8 +12,8 @@ public class AssessmentStateHelper {
     public static enum AssessmentNode{
         INI,
         OPN,
-        REP,
-        FED,
+        REP,//渠道通知片区CEO
+        FED,//片区CEO上报
         AUD,//分局长审核
         AAU,//区域审核
         QAU,//渠道审阅
@@ -69,5 +70,35 @@ public class AssessmentStateHelper {
 
     public static String getUseOrNotState(){
         return JSON.toJSONString(useOrNotStateStringEnumMap);
+    }
+
+    public static AssessmentNode nextNode(AssessmentNode node){
+        switch (node){
+            case OPN:return AssessmentNode.REP;
+            case REP:return AssessmentNode.AUD;
+            case AUD:return AssessmentNode.AAU;
+            case AAU:return AssessmentNode.QAU;
+            case QAU:return AssessmentNode.SGN;
+            case SGN:return AssessmentNode.DRV;
+            case DRV:return AssessmentNode.ARV;
+            case ARV:return AssessmentNode.END;
+        }
+        throw new UnsupportedOperationException("节点状态错误!");
+    }
+
+    public static AssessmentNode prevNode(AssessmentNode node){
+        switch (node){
+            case END:return AssessmentNode.ARV;
+            case ARV:return AssessmentNode.DRV;
+            case DRV:return AssessmentNode.SGN;
+            case SGN:return AssessmentNode.QAU;
+            case QAU:return AssessmentNode.AAU;
+            case AAU:return AssessmentNode.AUD;
+            case AUD:return AssessmentNode.FED;
+            case FED:return AssessmentNode.REP;
+            case REP:return AssessmentNode.OPN;
+
+        }
+        throw new UnsupportedOperationException("节点状态错误!");
     }
 }

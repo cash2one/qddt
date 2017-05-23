@@ -19,8 +19,8 @@ public class PointCalculation extends CalculationBase  implements CalculationInt
     public double calc(ZoneMark  mark) {
         if (mark == null)
             return 0;
-        double delta  = mark.getVal().doubleValue() - mark.getLastVal().doubleValue();
-        double deltaMark = AssessmentHelper.equalsZero(mark.getLastVal().doubleValue()) ? 0.0 : delta/mark.getLastVal().doubleValue()*100.0;
+        //门店产能按权重的1.2倍封顶
+        double deltaMark = AssessmentHelper.equalsZero(mark.getLastVal().doubleValue()) ? 0.0 : mark.getVal().doubleValue()/mark.getLastVal().doubleValue()*100.0;
         double weightMark = Math.min(getItem().getWeight().doubleValue()*1.2, deltaMark*getItem().getWeight().doubleValue()/100.0);
         mark.setMark(BigDecimal.valueOf(deltaMark));
         mark.setWeightMark(BigDecimal.valueOf(weightMark));

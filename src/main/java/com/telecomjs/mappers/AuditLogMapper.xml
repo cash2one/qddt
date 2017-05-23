@@ -144,6 +144,30 @@
       </if>
     </trim>
   </insert>
+    <insert id="insertByDistricts">
+      INSERT AUDIT_LOG
+      <include refid="Base_Column_List" />
+      select
+        SEQ_AUDIT_LOG_ID.nextval,assessment_id,#{auditLog.nodeName},#{auditLog.auditId}
+        ,#{auditLog.submission},#{auditLog.remark},sysdate,#{auditLog.staffName},#{auditLog.state}
+      from assessment
+      where  billing_cycle = #{billingCycle} and  zone_id in
+      ( select AREA_ID_TM from APP_YDBP_AREA
+      where area_id_l2  in
+      <foreach close=")" collection="districtIds" item="id"   open="(" separator=",">
+        #{id}
+      </foreach>
+      )
+    </insert>
+  <insert id="insertAllByCycle">
+    INSERT AUDIT_LOG
+    <include refid="Base_Column_List" />
+    select
+    SEQ_AUDIT_LOG_ID.nextval,assessment_id,#{auditLog.nodeName},#{auditLog.auditId}
+    ,#{auditLog.submission},#{auditLog.remark},sysdate,#{auditLog.staffName},#{auditLog.state}
+    from assessment
+    where  billing_cycle = #{billingCycle}
+  </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.telecomjs.beans.AuditLog" >
     <!--
       WARNING - @mbggenerated

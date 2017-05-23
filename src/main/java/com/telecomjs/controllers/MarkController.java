@@ -1,6 +1,5 @@
 package com.telecomjs.controllers;
 
-import com.alibaba.fastjson.JSON;
 import com.telecomjs.beans.*;
 import com.telecomjs.datagrid.*;
 import com.telecomjs.services.intf.AssessmentService;
@@ -19,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -186,19 +186,41 @@ public class MarkController extends BaseController {
         out.write("操作失败!");
     }
 
-    //渠道审阅完数据，通知ceo分配考核数据
-    @ResponseBody
-    @RequestMapping("/donotifycycle")
-    public void notifyBillingCycle(@RequestParam("billingCycle")int billingCycle,HttpServletResponse response) throws IOException {
-        billingCycle = 201704; //for test
-        PrintWriter out = HttpResponseHelper.getUtf8Writer(response);
-        Subject subject = SecurityUtils.getSubject();
-        if (subject.hasRole(UserHelper.RoleType.ADMIN.name())){
-            if (markService.notifyBillingCycle(billingCycle)>0){
-                out.write("操作成功!");
-                return;
+
+    @RequestMapping("/areaauditview")
+    public ModelAndView areaAuditView(@RequestParam String areaName,@RequestParam int billingCycle){
+        ModelAndView view  = new ModelAndView("areaauditview");
+        List<BillingCycle> cycles = assessmentService.findAllCycles();
+        view.getModel().put("cycles",cycles);
+
+        long areaId = assessmentService.getAreaIdByName(areaName);
+        billingCycle=201703;
+        areaId=250002656l;
+        List<Assessment> assessments = billingCycle == 0 ?   new ArrayList<Assessment>() :
+                assessmentService.findAssessmentByArea (Long.valueOf(areaId),billingCycle);
+        Map assessmentMap = new HashMap();
+        for (Assessment assessment : assessments){
+            List list = (List) assessmentMap.get(assessment.getDistrictName());
+            if (list == null){
+                list = new ArrayList();
             }
+            list.add(assessment);
+            assessmentMap.put(assessment.getDistrictName(), list);
         }
-        out.write("操作失败!");
+        view.getModel().put("map",assessmentMap);
+        return view;
+    }
+    @RequestMapping("/adminauditview")
+    public ModelAndView adminAuditView( @RequestParam int billingCycle){
+        ModelAndView view  = new ModelAndView("adminauditview");
+        List<BillingCycle> cycles = assessmentService.findAllCycles();
+        view.getModel().put("cycles",cycles);
+
+        //测试数据
+        billingCycle=201703;
+        List<Assessment> assessments = billingCycle == 0 ?   new ArrayList<Assessment>() :
+                assessmentService.findAllAreaAssessments ( billingCycle);
+        view.getModel().put("assessments",assessments);
+        return view;
     }
 }

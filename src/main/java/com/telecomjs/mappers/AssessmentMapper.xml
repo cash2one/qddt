@@ -366,6 +366,19 @@
     GROUP BY BILLING_CYCLE,AREA_NAME,STATE
   </select>
 
+  <select id="findAreaAssessmentsByCycle" resultMap="BaseResultMap">
+    select BILLING_CYCLE,AREA_NAME ,STATE
+      ,trunc(avg(SCORE),2) as SCORE,sum(LAST_REWARD) as LAST_REWARD
+      ,sum(LAST_FORWARD_REWARD) as LAST_FORWARD_REWARD
+      ,count(1) as LAST_SETTLEMENT
+      ,sum(FORWARD_REWARD) as FORWARD_REWARD
+      ,sum(REWARD) as REWARD
+      ,sum(DOUBLE_REWARD) as DOUBLE_REWARD
+      ,max(CREATE_DATE) as CREATE_DATE
+    from ASSESSMENT
+    WHERE billing_cycle  = #{billingCycle}
+    GROUP BY BILLING_CYCLE,AREA_NAME,STATE
+  </select>
   <select id="findDistrictAssessments" resultMap="BaseResultMap">
     select BILLING_CYCLE,AREA_NAME,DISTRICT_NAME ,STATE
       ,trunc(avg(SCORE),2) as SCORE,sum(LAST_REWARD) as LAST_REWARD
@@ -376,6 +389,20 @@
       ,sum(DOUBLE_REWARD) as DOUBLE_REWARD
       ,max(CREATE_DATE) as CREATE_DATE
     from ASSESSMENT
+    GROUP BY BILLING_CYCLE,AREA_NAME,DISTRICT_NAME,STATE
+  </select>
+  <select id="findDistrictAssessmentsByAreaAndCycle" resultMap="BaseResultMap">
+    select BILLING_CYCLE,AREA_NAME,DISTRICT_NAME ,STATE
+    ,trunc(avg(SCORE),2) as SCORE,sum(LAST_REWARD) as LAST_REWARD
+    ,sum(LAST_FORWARD_REWARD) as LAST_FORWARD_REWARD
+    ,sum(LAST_SETTLEMENT) as LAST_SETTLEMENT
+    ,sum(FORWARD_REWARD) as FORWARD_REWARD
+    ,sum(REWARD) as REWARD
+    ,sum(DOUBLE_REWARD) as DOUBLE_REWARD
+    ,max(CREATE_DATE) as CREATE_DATE
+    from ASSESSMENT
+    WHERE BILLING_CYCLE = #{billingCycle}
+    and ZONE_id in (select area_id_tm from APP_YDBP_AREA where area_id = #{areaId})
     GROUP BY BILLING_CYCLE,AREA_NAME,DISTRICT_NAME,STATE
   </select>
 
@@ -482,6 +509,8 @@
     Order by assessment_id
   </select>
 
+
+
   <update id="updateTempOpenByEvent">
         UPDATE assessment_temp SET state='OPN',state_date = sysdate
         WHERE assessment_event_id = #{eventId}
@@ -509,6 +538,26 @@
     UPDATE ASSESSMENT
     SET state = #{state} ,state_date = sysdate
     WHERE assessment_id = #{assessmentId}
+  </update>
+  <update id="changeState">
+    UPDATE ASSESSMENT
+    SET state = #{state}
+    where BILLING_CYCLE = #{billingCycle}
+  </update>
+  <update id="changeStateFromTo">
+    UPDATE ASSESSMENT set state = #{newState}
+    where  zone_id in
+    ( select AREA_ID_TM from APP_YDBP_AREA
+    where area_id_l2  in
+      <foreach close=")" collection="districtIds" item="id"   open="(" separator=",">
+        #{id}
+      </foreach>
+    )
+    and state = #{oldState} and BILLING_CYCLE = #{billingCycle}
+  </update>
+  <update id="changeAllState">
+    update ASSESSMENT set state=#{newState}
+    where state = #{oldState} and BILLING_CYCLE = #{billingCycle}
   </update>
   <insert id="insertBySelectEvent">
         INSERT INTO   ASSESSMENT (ASSESSMENT_ID, ASSESSMENT_EVENT_ID,
@@ -548,6 +597,19 @@
       #{doubleReward,jdbcType=DECIMAL}, #{state,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}
       )
   </insert>
+    <insert id="insertByCycle">
+      INSERT INTO   ASSESSMENT (ASSESSMENT_ID, ASSESSMENT_EVENT_ID,
+      AREA_NAME, DISTRICT_NAME, ZONE_NAME,
+      ZONE_ATTR, ZONE_CHANNEL_CODE, CHANNEL_NAME,
+      ZONE_ID, BILLING_CYCLE, SCORE,
+      CRITERION, LAST_REWARD, LAST_FORWARD_REWARD,
+      LAST_SETTLEMENT, FORWARD_REWARD, REWARD,
+      DOUBLE_REWARD, STATE, CREATE_DATE
+      )
+      SELECT  *
+      from zone_mark_assessment
+    </insert>
+  <insert id="insertAssessmentsByCycle"></insert>
 
   <delete id="deleteTempByEvent">
 

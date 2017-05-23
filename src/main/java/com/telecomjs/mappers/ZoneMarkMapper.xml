@@ -181,16 +181,23 @@
     (
     <foreach close="" collection="markList" item="item" index="index" open="" separator=" union all ">
       SELECT
-      #{item.zoneId},
-      #{item.itemId},
-      #{item.billingCycle},
-      #{item.val},
-      #{item.lastVal},
-      #{item.mark},
-      #{item.weightMark}
+      #{item.zoneId,jdbcType=DECIMAL},
+      #{item.itemId,jdbcType=DECIMAL},
+      #{item.billingCycle,jdbcType=DECIMAL},
+      #{item.val,jdbcType=DECIMAL},
+      #{item.lastVal,jdbcType=DECIMAL},
+      #{item.mark,jdbcType=DECIMAL},
+      #{item.weightMark,jdbcType=DECIMAL}
       from dual
     </foreach>
     ) T
+  </insert>
+  <insert id="insertAssessment">
+    INSERT INTO zone_mark_assessment
+    select a.mark_id,a.zone_id,a.channel_type,a.delegate_type,seq_assessment_id.nextval,a.billing_cycle,b.mark,a.criterion , round(b.mark/100*a.criterion,2)    reward,round(b.mark/100*a.criterion,2)*2 reward2,sysdate
+    from zone_mark_base a,(select zone_id,sum(weight_mark) mark from zone_mark where billing_cycle=#{billingCycle} group by zone_id) b
+    where  a.zone_id = b.zone_id
+    and    a.billing_cycle = #{billingCycle}
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.telecomjs.beans.ZoneMark">
     <!--

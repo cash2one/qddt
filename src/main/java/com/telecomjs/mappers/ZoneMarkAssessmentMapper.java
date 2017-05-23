@@ -1,6 +1,7 @@
 package com.telecomjs.mappers;
 
 import com.telecomjs.beans.ZoneMarkAssessment;
+import org.apache.ibatis.annotations.Param;
 
 public interface ZoneMarkAssessmentMapper {
     /**
@@ -50,4 +51,6 @@ public interface ZoneMarkAssessmentMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(ZoneMarkAssessment record);
+
+    int deleteByCycle(@Param("billingCycle") int billingCycle);
 }

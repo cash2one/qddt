@@ -1,6 +1,7 @@
 package com.telecomjs.services.intf;
 
 import com.telecomjs.beans.*;
+import com.telecomjs.datagrid.AssessmentStateHelper;
 import com.telecomjs.datagrid.AuditNodeHelper;
 
 import java.util.List;
@@ -79,8 +80,13 @@ public interface AssessmentService {
 
 
     List<Assessment> findAllDistrictAssessments();
+    //根据账期和区域查询所有分局的统计结果
+    List<Assessment> findAllDistrictAssessments(long areaId,int billingCycle);
 
     List<Assessment> findAllAreaAssessments();
+    //根据账期查询所有区域的统计结果
+    List<Assessment> findAllAreaAssessments(int billingCycle);
+
 
     List<BillingCycle> findAllCycles();
 
@@ -146,4 +152,17 @@ public interface AssessmentService {
 
     int addBillingCycle(int billingCycle);
 
+    int notifyBillingCycle(int billingCycle);
+
+    //判断区域是否有权对分局做操作
+    boolean areaHasAllDistricts(Long aLong, List<Long> districtIds);
+
+    public int auditDistricts(int billingCycle,List<Long> districtIds, AuditNodeHelper.SuggestionType suggestionType, AuditLog auditLog , AssessmentStateHelper.AssessmentNode node);
+
+    public int reAuditAssessment(int assessmentId, AuditNodeHelper.SuggestionType suggestionType, String remark, AssessmentStateHelper.AssessmentNode node, Staff staff);
+
+    int auditAll(int billingCycle, AuditNodeHelper.SuggestionType suggestionType, String remark, AssessmentStateHelper.AssessmentNode aud, Staff staff);
+    //根据名称查询区域ID和分局ID
+    public long getDistrictIdByName(String name);
+    public long getAreaIdByName(String name);
 }

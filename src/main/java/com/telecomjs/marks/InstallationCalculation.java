@@ -24,7 +24,8 @@ public class InstallationCalculation extends CalculationBase  implements Calcula
             return 0;
         }
         double markValue ;
-        markValue = mark.getVal().doubleValue()/mark.getLastVal().doubleValue()*getItem().getWeight().doubleValue();
+        //装维按权重封顶
+        markValue = Math.min(getItem().getWeight().doubleValue(), mark.getVal().doubleValue()/mark.getLastVal().doubleValue()*getItem().getWeight().doubleValue());
         mark.setWeightMark(BigDecimal.valueOf(markValue));
         mark.setMark(BigDecimal.valueOf(mark.getVal().doubleValue()/mark.getLastVal().doubleValue()*100.0));
         return markValue;

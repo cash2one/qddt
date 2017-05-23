@@ -108,4 +108,18 @@ public interface AssessmentMapper {
     int existsStaffAssessment(@Param("cssStaffId") Long cssStaffId, @Param("assessmentId") Integer assessmentId);
 
     int updateByIdAndState(@Param("assessmentId") Integer assessmentId, @Param("state") String state);
+
+    int insertByCycle(@Param("billingCycle") int billingCycle);
+
+    int changeState(@Param("billingCycle") int billingCycle, @Param("state") String state);
+
+    int changeStateFromTo(@Param("billingCycle") int billingCycle, @Param("districtIds") List<Long> districtIds, @Param("oldState") String oldState, @Param("newState") String newState);
+
+    int changeAllState(@Param("billingCycle") int billingCycle, @Param("oldState") String oldState, @Param("newState") String newState);
+
+    int insertAssessmentsByCycle(@Param("billingCycle") int billingCycle);
+
+    List<Assessment> findAreaAssessmentsByCycle(@Param("billingCycle") int billingCycle);
+
+    List<Assessment> findDistrictAssessmentsByAreaAndCycle(@Param("areaId") long areaId, @Param("billingCycle") int billingCycle);
 }

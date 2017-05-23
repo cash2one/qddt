@@ -44,13 +44,14 @@ public class AuditNodeHelper {
     }
 
     public static AuditLog makeAuditLog(int id,int assessmentId,String remark,String suggestion
-            ,String areaName,String districtName,String zoneName,Long cssNumber){
+            ,String areaName,String districtName,String zoneName,Long cssNumber,String staffName){
         AuditLog auditLog = new AuditLog();
         auditLog.setAssessmentId(assessmentId);
         auditLog.setRemark(remark);
         auditLog.setNodeName(AuditNodeHelper.makeNode(NodeType.ZoneAudit,areaName,districtName,zoneName));
         auditLog.setNodeStaff(cssNumber);
         auditLog.setAuditId(id);
+        auditLog.setStaffName(staffName);
         auditLog.setSubmission(suggestion);
         auditLog.setStateDate(new Date());
 

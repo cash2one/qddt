@@ -10,7 +10,7 @@ public class CalculationFactory {
         MarkItemCodeEnum codeEnum = MarkItemCodeEnum.valueOf(item.getCode());
         switch (codeEnum){
             case JFDF: return getJfdf(item);
-            case STLDF: return getStddf(item);
+            case STLDF: return getStldf(item);
             case ZWDF:return getZwdf(item);
             case JCDF:return getJcdf(item);
             case QYDF:return getQydf(item);
@@ -29,7 +29,7 @@ public class CalculationFactory {
         return jfdf;
     }
 
-    public static CalculationIntf getStddf(ZoneMarkItem item) {
+    public static CalculationIntf getStldf(ZoneMarkItem item) {
         if (stddf == null)
             stddf = new BandCalculation(item);
         return stddf;

@@ -34,4 +34,7 @@ public interface AppYdbpAreaMapper {
     int insert4t(AppYdbpArea record);
 
     int clearAll();
+
+    long getDistrictId(@Param("name") String name);
+    long getAreaId(@Param("name") String name);
 }

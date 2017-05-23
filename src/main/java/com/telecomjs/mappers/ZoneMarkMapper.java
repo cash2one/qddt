@@ -68,4 +68,6 @@ public interface ZoneMarkMapper {
     int insertManual(@Param("billingCycle") int billingCycle);
 
     int insertBatch(@Param("markList") List<ZoneMark> markList);
+
+    int insertAssessment(@Param("billingCycle") int billingCycle);
 }

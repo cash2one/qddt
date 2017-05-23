@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.telecomjs.datagrid.AssessmentStateHelper.AssessmentNode;
 import com.telecomjs.datagrid.AssessmentStateHelper.AssessmentOperation;
+import com.telecomjs.datagrid.AuditNodeHelper.SuggestionType;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -38,6 +39,8 @@ public class AssessmentServiceImpl implements AssessmentService{
     AuditLogMapper auditLogMapper;
     @Autowired
     AssessmentLogMapper assessmentLogMapper;
+    @Autowired
+    AppYdbpAreaMapper appYdbpAreaMapper;
 
     public int getSequenceOfEvent(){
         return assessmentEventMapper.getPrimaryKey();
@@ -282,8 +285,23 @@ public class AssessmentServiceImpl implements AssessmentService{
     }
 
     @Override
+    public List<Assessment> findAllDistrictAssessments(long areaId, int billingCycle) {
+        return assessmentMapper.findDistrictAssessmentsByAreaAndCycle(areaId,billingCycle);
+    }
+
+    @Override
     public List<Assessment> findAllAreaAssessments() {
         return assessmentMapper.findAreaAssessments();
+    }
+
+    /**
+     * 根据账期查询每个账期的信息
+     * @param billingCycle
+     * @return
+     */
+    @Override
+    public List<Assessment> findAllAreaAssessments(int billingCycle) {
+        return assessmentMapper.findAreaAssessmentsByCycle(billingCycle);
     }
 
     @Override
@@ -648,5 +666,98 @@ public class AssessmentServiceImpl implements AssessmentService{
         return billingCycleMapper.insert(cycle);
     }
 
+    @Override
+    public int notifyBillingCycle(int billingCycle) {
+        if (!hasBillingCycle(billingCycle,BillingCycleStateEnum.OPN.name()))
+            if ( billingCycleMapper.changeState(billingCycle,BillingCycleStateEnum.REP.name()) > 0){
+                assessmentMapper.insertByCycle(billingCycle);
+                assessmentMapper.changeState(billingCycle,AssessmentNode.REP.name());
+                return  1;
+            }
+        return 0;
+    }
+
+    @Override
+    public boolean areaHasAllDistricts(Long aLong, List<Long> districtIds) {
+        return true;
+    }
+
+    @Override
+    public int auditDistricts(int billingCycle,List<Long> districtIds, SuggestionType suggestionType, AuditLog auditLog, AssessmentNode node) {
+        AssessmentNode newNode = suggestionType==SuggestionType.Agree
+                ?AssessmentStateHelper.nextNode(node)
+                :AssessmentStateHelper.prevNode(node);
+        assessmentMapper.changeStateFromTo(billingCycle,districtIds,node.name(),newNode.name());
+        auditLogMapper.insertByDistricts(billingCycle,districtIds,auditLog);
+        return districtIds.size();
+    }
+
+    @Override
+    public int reAuditAssessment(int assessmentId, SuggestionType suggestionType, String remark,AssessmentNode node,Staff staff) {
+        Assessment assessment = assessmentMapper.selectByPrimaryKey(assessmentId);
+        AssessmentNode nextNode = suggestionType==SuggestionType.Agree
+                ?AssessmentStateHelper.nextNode(node)
+                :AssessmentStateHelper.prevNode(node);
+        if (assessment != null){
+            //刷新subscriber表
+            assessmentSubscriberMapper.changeState(assessmentId,node.name(),nextNode.name());
+            String suggestionRemark = remark==null?suggestionType.getSuggestion():remark;
+            AuditLog auditLog = AuditNodeHelper.makeAuditLog(getSequenceOfAuditLog(),
+                    assessment.getAssessmentId(),
+                    suggestionRemark,
+                    suggestionType.getSuggestion(),
+                    assessment.getAreaName(),
+                    assessment.getDistrictName(),
+                    assessment.getZoneName(),
+                    Long.valueOf(staff.getCssStaffNumber()),
+                    staff.getName());
+            //记录日志
+            auditLogMapper.insert(auditLog);
+            //更新assessement状态
+            assessmentMapper.updateByIdAndState(assessmentId,nextNode.name());
+            return assessmentId;
+        }
+        return 0;
+    }
+
+    @Override
+    public int auditAll(int billingCycle, SuggestionType suggestionType, String remark,  AssessmentNode node, Staff staff) {
+        AssessmentNode newNode = suggestionType==SuggestionType.Agree
+                ?AssessmentStateHelper.nextNode(node)
+                :AssessmentStateHelper.prevNode(node);
+
+        String suggestionRemark = remark==null?suggestionType.getSuggestion():remark;
+        AuditLog auditLog = AuditNodeHelper.makeAuditLog(0,
+                0,
+                suggestionRemark,
+                suggestionType.getSuggestion(),
+                null,
+                null,
+                null,
+                Long.valueOf(staff.getCssStaffNumber()),
+                staff.getName());
+        assessmentMapper.changeAllState(billingCycle,node.name(),newNode.name());
+        auditLogMapper.insertAllByCycle(billingCycle,auditLog);
+        return 0;
+    }
+
+    @Override
+    public long getDistrictIdByName(String name) {
+        return appYdbpAreaMapper.getDistrictId(name);
+    }
+
+    @Override
+    public long getAreaIdByName(String name) {
+        return appYdbpAreaMapper.getAreaId(name);
+    }
+
+
+    private boolean hasBillingCycle(int billingCycle,String preState){
+        BillingCycle cycle = billingCycleMapper.selectByPrimaryKey(billingCycle);
+        if (cycle == null || !cycle.getState().equals(preState)){
+            return false;
+        }
+        return true;
+    }
 
 }

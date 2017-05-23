@@ -39,9 +39,7 @@ public interface MarkService {
      */
     int openCycleAndCreateMark(int billingCycle);
 
-    //int openBillingCycle(int billingCycle);
-
+    //提交账期，渠道确认数据
     int commitBillingCycle(int billingCycle);
 
-    int notifyBillingCycle(int billingCycle);
 }

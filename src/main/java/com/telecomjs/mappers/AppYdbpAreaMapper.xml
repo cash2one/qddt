@@ -120,6 +120,18 @@
     FROM PUB.APP_YDBP_AREA
     ORDER BY DISP_SEQ,AREA_ID_L2,AREA_ID_TM
   </select>
+    <select id="getDistrictId" resultType="java.lang.Long">
+      SELECT AREA_ID_L2
+      FROM APP_YDBP_AREA
+      WHERE AREA_NAME_L2 = #{name}
+      and rownum &lt;=1
+    </select>
+  <select id="getAreaId" resultType="java.lang.Long">
+    SELECT area_id
+    from APP_YDBP_AREA
+    where area_name=#{name}
+    and rownum &lt;=1
+  </select>
   <insert id="insert4t" parameterType="com.telecomjs.beans.AppYdbpArea" >
     <!--
       WARNING - @mbggenerated

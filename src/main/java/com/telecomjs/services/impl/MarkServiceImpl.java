@@ -151,6 +151,12 @@ public class MarkServiceImpl implements MarkService {
         return markMapper.findMarkWithCode(zoneId,billingCycle,code);
     }
 
+    /**
+     * 打开账期，从后台取数自动计算考核表
+     * 从zone_mark 到 mark_assessment
+     * @param billingCycle
+     * @return
+     */
     @Override
     public int openCycleAndCreateMark(int billingCycle) {
         if (!hasBillingCycle(billingCycle,BillingCycleStateEnum.INI.name()))
@@ -181,15 +187,20 @@ public class MarkServiceImpl implements MarkService {
                 //markMapper.insert(mark);
             }
             markMapper.insertBatch(markList);
+
+            markList.clear();
             ZoneMarkItem item = itemMapper.getByCode(MarkItemCodeEnum.STLDF.name());
             for (ZoneMark mark : mapper.findSTLTS(billingCycle)){
-                mark.setMarkId(markMapper.getPrimaryKey());
+                //mark.setMarkId(markMapper.getPrimaryKey());
                 mark.setBillingCycle((long) billingCycle);
                 mark.setItemId(item.getItemId());
                 CalculationContext.getMark(mark,item);
                 markList.add(mark);
                 //markMapper.insert(mark);
             } //渗透率
+            markMapper.insertBatch(markList);
+
+            markList.clear();
             ZoneMarkItem zwItem = itemMapper.getByCode(MarkItemCodeEnum.ZWDF.name());
             String key = Constants.KEY_COUNT_PER_ASSIST;//暂时硬代码写死
             String countPerAssist = kpiValueMapper.getValueWithCycle(key,billingCycle);
@@ -202,8 +213,11 @@ public class MarkServiceImpl implements MarkService {
                 markList.add(mark);
                 //markMapper.insert(mark);
             } //装维得分
-            //mapper.insertBatch(markList);
+            markMapper.insertBatch(markList);
+
             markMapper.insertManual(billingCycle);
+            zoneMarkAssessmentMapper.deleteByCycle(billingCycle);
+            markMapper.insertAssessment(billingCycle);
             session.close();
             //createAssessments(billingCycle);
             return billingCycle;
@@ -232,13 +246,15 @@ public class MarkServiceImpl implements MarkService {
 
     /**
      * 渠道审阅完自动打分表，确认并提交结果 OPENING-OPN
+     * 从mark_assessment 到 assessment
      * @param billingCycle
      * @return
      */
     @Override
     public int commitBillingCycle(int billingCycle) {
         if (!hasBillingCycle(billingCycle,BillingCycleStateEnum.OPENING.name()))
-            return billingCycleMapper.changeState(billingCycle,BillingCycleStateEnum.OPN.name());
+            if ( billingCycleMapper.changeState(billingCycle,BillingCycleStateEnum.OPN.name()) > 0)
+                return createAssessments(billingCycle);
         return 0;
     }
 
@@ -247,31 +263,24 @@ public class MarkServiceImpl implements MarkService {
      * @param billingCycle
      * @return
      */
-    @Override
+    /*@Override
     public int notifyBillingCycle(int billingCycle) {
+        if (!hasBillingCycle(billingCycle,BillingCycleStateEnum.OPENING.name()))
+            if ( billingCycleMapper.changeState(billingCycle,BillingCycleStateEnum.OPN.name()) > 0)
+                return createAssessments(billingCycle);
         return 0;
-    }
+    }*/
 
+
+    /**
+     * 根据zone_mark_assessment 创建assessment表
+     * @param billingCycle
+     * @return
+     */
     private int createAssessments(int billingCycle){
-        List<ZoneMarkBase> baseList = markBaseMapper.findAllByCycle(billingCycle);
-        MarkDirect direct  = new MarkDirect(this);
-        for (ZoneMarkBase base : baseList){
-            double mark = 0;
-            for (ZoneMarkWithItem m : direct.getMarkList(base.getZoneId(),billingCycle)){
-                mark += CalculationContext.getMark(m);
-            }
-
-            int assessmentId = assessmentMapper.getPrimaryKey();
-            ZoneMarkAssessment assessment = MarkHelper.createMarkAssessment(
-                    base.getMarkId(),base.getZoneId(),base.getChannelType(),
-                    base.getDelegateType(),assessmentId,base.getBillingCycle(),mark,
-                    base.getCriterion().doubleValue(),
-                    mark/100*base.getCriterion().doubleValue()
-            );
-            zoneMarkAssessmentMapper.insert(assessment);
-        }
-        return baseList.size();
+        return assessmentMapper.insertAssessmentsByCycle(billingCycle);
     }
+
 
     private boolean hasBillingCycle(int billingCycle,String preState){
         BillingCycle cycle = billingCycleMapper.selectByPrimaryKey(billingCycle);
